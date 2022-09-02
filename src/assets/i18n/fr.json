@@ -1,0 +1,25 @@
+
+{
+    "date_initial": "Date de début",
+    "start_membership":"Adhésion initiale",
+    "start_rewards3x": "3x récompense de départ",
+    "start_rewards4x": "4x récompense de départ",
+
+    "day":"Jour",
+    "date":"Date",
+    "amount": "Montant",
+    "daily_rewards":"Quotidien",
+    "daily_rewards_running_balance": "Balance quotidienne",
+    "rebuy": "Rachats",
+    "membership_rewards_running_balance":"Totale",
+
+
+    "required_field": "fchamp requis",
+    "only_numbers":"Seulement les chiffres",
+    "min_value_field": "Valeur minimale 50",
+
+    "made_in":"fabriqué en Colombie",
+
+    "footer_invalid": "Aucun calcul n'a été effectué"
+}
+

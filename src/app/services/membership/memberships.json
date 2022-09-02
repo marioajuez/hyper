@@ -1,0 +1,20 @@
+{
+    "memberships": [
+        {
+            "id": "1",
+            "name": "membership 1.0",
+            "totalDays": "600",
+            "initialMembershipLeverage": "3",
+            "percentRewards": "0.005",
+            "minimumBalanceRebuy": "50"
+        },
+        {
+            "id": "2",
+            "name": "membership 2.0",
+            "totalDays": "1333",
+            "initialMembershipLeverage": "4",
+            "percentRewards": "0.003",
+            "minimumBalanceRebuy": "125"
+        }
+    ]
+}

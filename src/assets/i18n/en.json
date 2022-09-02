@@ -1,0 +1,26 @@
+{
+    "date_initial": "Start Date",
+    "start_membership":"Starting Membership",
+    "start_rewards3x": "3x start reward",
+    "start_rewards4x": "4x start reward",
+
+    "day":"Day",
+    "date":"Date",
+    "amount": "Amount",
+    "daily_rewards":"Daily",
+    "daily_rewards_running_balance": "Daily Balance",
+    "rebuy": "Rebuy",
+    "membership_rewards_running_balance":"Total",
+
+
+    
+    "required_field": "required field",
+    "only_numbers":"only numbers",
+    "min_value_field": "minimum value 50",
+
+    "made_in":"made in Colombia",
+
+    "footer_invalid": "No calculation has been performed"
+
+
+}

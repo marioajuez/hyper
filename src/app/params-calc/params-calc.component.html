@@ -1,0 +1,127 @@
+<!-- <main class="container">
+
+
+  <mat-card>
+    <mat-card-content>
+      <form [formGroup]="form">
+        <div style="display:flex; flex-direction: column;">
+          <mat-form-field appearance="fill">
+            <mat-label>initial Membership Leverage</mat-label>
+            <input matInput formControlName="initialMembershipLeverage">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>percent rewards</mat-label>
+            <input matInput formControlName="percentRewards">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>minimum balance eebuy</mat-label>
+            <input matInput formControlName="minimumBalanceRebuy">
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>total days</mat-label>
+            <input matInput formControlName="totalDays">
+          </mat-form-field>
+        </div>
+      </form>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Memberships</mat-label>
+        <mat-select [(value)]="selectedMembership">
+          <mat-option>None</mat-option>
+          <mat-option [value]="item.name" *ngFor="let item of listMemberShips">
+            {{ item.name | titlecase }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="createMembership()">Create membership </button>
+    </mat-card-actions>
+  </mat-card>
+</main> -->
+
+<main class="container">
+  <mat-card style="width: 400px">
+    <mat-card-content>
+      <mat-list class="padding-top-0">
+        <mat-list-item *ngFor="let item of listMemberShips">
+          <div class="list-item-content">
+            <mat-icon>card_membership</mat-icon>
+            <div class="item-option" style="margin-left:10px">
+                <mat-label class="mat-h3 margin-0"> 
+                  {{item.name}}
+                </mat-label>
+            </div>
+            <div class="actions-option"> 
+              <button mat-icon-button><mat-icon>edit</mat-icon></button>
+              <button mat-icon-button><mat-icon>delete</mat-icon> </button>
+              <mat-checkbox [disabled]="false" color="primary"></mat-checkbox>
+            </div>
+      
+          </div>
+          <mat-divider></mat-divider>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card style="width: 400px">
+    <mat-card-title>Create membership</mat-card-title>
+    <mat-card-subtitle>
+      <mat-label class="mat-small"> 
+        {{ 'please fill out the form to create membership' }}
+      </mat-label>
+    </mat-card-subtitle>
+    <mat-card-content>
+      <form [formGroup]="form">
+        <div style="display: flex; flex-direction: column">
+          <mat-form-field appearance="fill">
+            <mat-label>initial Membership Leverage</mat-label>
+            <input matInput formControlName="initialMembershipLeverage" />
+            <mat-error>
+              <ng-container>{{ "error" }}</ng-container>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>percent rewards</mat-label>
+            <input matInput formControlName="percentRewards" />
+            <mat-error>
+              <ng-container>{{ "error" }}</ng-container>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>minimum balance eebuy</mat-label>
+            <input matInput formControlName="minimumBalanceRebuy" />
+            <mat-error>
+              <ng-container>{{ "error" }}</ng-container>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>total days</mat-label>
+            <input matInput formControlName="totalDays" />
+            <mat-error>
+              <ng-container>{{ "error" }}</ng-container>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <!-- <mat-form-field appearance="fill">
+          <mat-label>Memberships</mat-label>
+          <mat-select [(value)]="selectedMembership">
+            <mat-option>None</mat-option>
+            <mat-option [value]="item.name" *ngFor="let item of listMemberShips">
+              {{ item.name | titlecase }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field> -->
+      <button mat-raised-button color="primary" (click)="createMembership()">
+        save
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</main>

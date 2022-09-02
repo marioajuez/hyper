@@ -1,0 +1,26 @@
+
+{
+  "date_initial": "Fecha de inicio",
+  "start_membership":"Membresía inicial",
+  "start_rewards3x": "Recompensa inicial 3x",
+  "start_rewards4x": "Recompensa inicial 4x",
+
+
+  "day":"Día",
+  "date":"Fecha",
+  "amount": "Cantidad",
+  "daily_rewards":"Diario",
+  "daily_rewards_running_balance": "Balance Diario",
+  "rebuy": "Recompras",
+  "membership_rewards_running_balance":"Total",
+
+  "required_field": "campo obligatorio",
+  "only_numbers":"Solo números",
+  "min_value_field": "Valor mínimo 50",
+
+  "made_in":"hecho en Colombia",
+
+  "footer_invalid": "No se ha realizado ningún cálculo"
+}
+
+

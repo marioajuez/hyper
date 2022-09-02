@@ -1,0 +1,53 @@
+/* You can add global styles to this file, and also import other style files */
+
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+html{
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+html {
+  position: relative;
+    min-height: 100%;
+  }
+body {
+    height:100vh;
+
+    // height:100%;
+  // width:100%;
+  // display:table;
+  // table-layout:fixed;
+  // margin:0 auto;
+  }
+
+
+
+$sm:576px;
+$md:768px;
+$lg:992px;
+$xl:1200px;
+
+@media only screen and (max-width: $md) {
+    // body {
+    //   padding: 5px !important;
+    // }
+}
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+  list-style: none;
+}
+
+// body{
+//   background: rgb(0, 0, 0);
+
+// }
+// body {
+//   font-family: Roboto, Arial, sans-serif;
+//   padding: 30px;
+// }

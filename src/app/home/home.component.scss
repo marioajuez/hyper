@@ -1,0 +1,486 @@
+$sm:576px;
+$md:768px;
+$lg:992px;
+$xl:1200px;
+
+$color-hyper: #7c3ec9;
+
+.color-background{
+  background: #ededed;
+  position: relative;
+  min-height: 100vh;
+  // height:100%;
+  // height: 97vh;
+}
+
+table, mat-table{
+    width: 100%;
+    // box-shadow: none;
+}
+.mat-header-cell{
+    background: white;
+    // background-color: #3f51b5;
+    // color: white;
+}
+
+.make{
+    background-color: lightblue;
+}
+
+.marker{
+    color: $color-hyper;
+    font-weight: bold;
+    font-style: italic;
+    // font-weight: bold;
+}
+.make-gold .mat-cell {
+    color: rgb(76, 68, 68);
+}
+td.mat-cell{
+    border-right: rgba(0,0,0,.12) solid 1px;
+    text-align: center;
+}
+th.mat-header-cell{
+    text-align: center;
+}
+
+td.mat-cell:last-of-type , th.mat-header-cell:last-of-type{
+    padding-right: 0px !important;
+}
+
+td.mat-cell:first-of-type, th.mat-header-cell:first-of-type{
+    padding-left: 0px !important;
+}
+
+.container-table.mat-elevation-z8 {    
+    overflow-x: auto;
+  }
+  .container-table .mat-table.mat-table {
+    min-width: 450px;
+  }
+
+mat-grid-tile {
+    background: lightblue;
+}
+
+ ::ng-deep.mat-form-field-disabled .mat-form-field-underline{
+    // border-bottom: 1px dotted;
+    
+  } 
+  .mat-accordion> .mat-expansion-panel-spacing:last-child, .mat-accordion > mat-expansion-panel{
+    margin-bottom: 20px;
+  }
+
+
+
+  .hide {
+    display: none !important;
+  }
+
+
+  th.mat-header-cell{
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  .container-table .mat-form-field + .mat-form-field {
+    margin-left: 8px;
+  }
+
+  .example-right-align {
+    text-align: right;
+  }
+
+  input.example-right-align::-webkit-outer-spin-button,
+  input.example-right-align::-webkit-inner-spin-button {
+    display: none;
+  }
+
+input.example-right-align {
+  -moz-appearance: textfield;
+}
+
+.container-table {
+  height: 70vh;
+  width: auto;
+  max-width: 100%;
+  overflow: auto;
+}
+
+.message-block .error-message {
+  // Hidden by default
+  display: none;
+}
+.message-block .error-message:first-child {
+  display: block;
+}
+
+// ::ng-deep.mat-form-field-disabled{
+//   padding: 0 !important;
+//   // position: inherit;
+// }
+
+// ::ng-deep.mat-form-field-disabled > .mat-form-field-wrapper{
+//   // padding: 0 !important;
+//   margin-bottom: -1.25em;
+// }
+
+::ng-deep.mat-form-field-appearance-fill .mat-form-field-flex {
+  background: white !important;
+  /* background-color: rgba(0,0,0,.04); */
+}
+
+.header-flex{
+  display: flex;
+  width: 100%;
+  margin: 0 0 20px 0;
+  border-radius: 15px;
+  background: rgb(255, 255, 255);
+}
+.header-flex > .content-header > span:first-child{
+  // color: #69f0ae
+  color: black;
+  font-weight: bold;
+ 
+}
+
+.header-flex > .content-header > span{
+  font-size: 77%;
+}
+
+.header-flex > .content-header{
+  flex: 1 1 auto;
+  text-align: center;
+  margin: 5px;  /* and that, will result in a 10px gap */
+}
+
+
+@media only screen and (max-width: $md) {
+    mat-form-field {
+        width: 100%;
+    }
+    .mat-expansion-panel-header{
+      padding-left: 0;
+    }
+}
+
+
+.mat-expansion-panel-header{
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.mat-elevation-z8 {
+    box-shadow: none;
+}
+
+.shadow-container{
+  border-radius: 20px;
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%),
+              0px 8px 10px 1px rgb(0 0 0 / 14%),
+              0px 3px 14px 2px rgb(0 0 0 / 12%);
+}
+
+form{
+  padding-bottom: 5%;
+  background: white;
+}
+
+.content-header{
+  display: flex;
+  flex-direction: column;
+}
+
+.flex{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.item-one{
+  flex: 0;
+  margin: 0px 20px 20px 20px;
+  border-radius: 15px;
+  box-sizing: border-box;
+
+}   
+mat-form-field {
+  padding: 0px 20px 0px 20px;
+  width: 100%;
+}
+
+.item-one > form > mat-form-field:first-child{
+    padding-top: 20px;
+}
+
+.item-two{
+  flex: 1;
+}
+
+.mat-toolbar{
+  background-color: $color-hyper; 
+  position: fixed;
+  top: 0;
+  z-index: 999999;
+  color: white;
+}
+
+.body-content{
+
+  padding: 90px 20px 20px 20px;
+}
+
+
+
+
+
+.header-flex >.content-header:first-child{
+  padding-left: 15px;
+}
+
+.header-flex >.content-header:last-child{
+  padding-right: 15px;
+}
+
+footer{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;  
+  text-align: center;
+  width: 100%;
+  left: 0;
+  right: 0;
+}
+// .header-flex
+
+// margin-right: 5px;
+// margin-top: 8px;
+
+@media only screen and (max-width: $md) {
+
+  .toolbar-title{
+    width: 70%!important;
+  }
+
+  td.mat-footer-cell {
+    padding: 0;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    font-size: 75%;
+    text-align: center;
+  }
+
+  // .toolbar-languaje > span:active { color: black; } /* or whatever your default style is */
+  
+  .toolbar-languaje{
+    width: 100% !important;
+  }
+  .toolbar-languaje > span{
+    font-size: 75%;
+    cursor: pointer;
+    // border: solid 1px; 
+    display: flex;
+    justify-content: none;
+    padding-right: 7px; padding-left: 7px;
+  }
+
+    td.mat-cell{
+      padding-right: 0px !important;
+  }
+
+  th.mat-header-cell {
+    text-align: right;
+    justify-content: flex-end;
+  }
+
+
+  tr.mat-header-row {
+    height: auto;
+  }
+
+  .item-one > form > mat-form-field:first-child, .item-one > form > mat-form-field{
+    padding:0 !important;
+  }
+  form{
+    padding-bottom: 0px;
+    padding: 12px 20px 12px 20px;
+  }
+  footer{
+
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 2.5rem;  
+    text-align: center;
+    width: 100%;
+    left: 0;
+    right: 0;
+
+  }
+  // form ::ng-deep.mat-form-field-wrapper{
+  //   margin-bottom: -1.25em !important;
+  // }
+  // .container-error{
+  //   position: relative;
+  //   // background: white;
+  //   font-size: 75%;
+  // }
+
+  .header-flex > .content-header > span{
+    font-size: 75%;
+  }
+
+  
+  ::ng-deep.mat-form-field-appearance-fill .mat-form-field-flex {
+    padding: 4px 0px 0px 0px !important ;
+    /* background-color: rgba(0,0,0,.04); */
+  }
+
+    th.mat-header-cell{
+      font-size: 75%;
+      text-align:center;
+      white-space: nowrap;
+  }
+
+  td.mat-cell{
+    border-right:none !important;
+  }
+
+.mat-row:nth-child(even){
+    background-color: #e9e9e9;
+  }
+        
+  .mat-row:nth-child(odd){
+      background-color: rgb(255, 255, 255);
+  }
+
+  // .mat-toolbar {
+  //   min-height: auto !important; 
+  //   height: auto !important;
+  // }
+
+  //  :not(td.mat-cell:first-child){
+
+  //   padding-right: 10px;
+  //   padding-left: 10px;
+  // }
+  td.mat-cell{
+    font-size: 75%;
+  }
+  .mat-toolbar-row > span{
+    font-size: 75%;
+  }
+  
+  // .mat-toolbar{
+  //   background-color: #69f0ae; 
+  //   color: black;
+  //   height:auto !;
+  // }
+  .color-background{
+     background: #ededed;;
+    //  height: auto;
+  }
+
+  .mat-toolbar {
+    min-height: auto !important; 
+    height: 24px !important;
+  }
+  
+  .mat-toolbar-row {
+    min-height: auto !important; 
+    height: 24px !important;
+  }
+  
+
+
+
+  .shadow-container{
+    // box-shadow: none;
+
+  }
+  .item-one{
+    background: white;
+    margin: 0px 0px 10px 0px !important;
+  }
+  h5{
+    margin: 0px !important; 
+  }
+
+  :not(.header-flex).shadow-container{
+    // box-shadow: none;
+    // margin-top: 9%;
+    // margin-top: 43%;
+  }
+
+  .header-flex{
+    margin: 0px 0px 0px 0px;
+    position: absolute;
+    top: 35px;
+    z-index: 3;
+    width: auto;
+    background: rgb(255, 255, 255);
+    left: 50%;
+    transform: translate(-50%, 0);
+  }
+  form {
+    position: relative;
+  }
+
+  // .header-flex)
+  .content-header{
+    margin:0px !important;
+  }
+  .header-flex.shadow-container{
+    border-radius: 13px;
+  }
+
+  tr.mat-row, tr.mat-footer-row {
+    height: auto;
+  }
+  .flex{
+      flex-direction: column !important;
+  }
+  .item-one,.item-two{
+      flex: 1;
+      width: 100%;
+  }
+  .body-content{
+      padding: 55px 11px 50px 11px !important;
+      position: relative;
+      min-height: 100vh;
+  }
+
+  .container-table {
+    height: 60vh;
+      // height: auto;
+  }
+
+  .container-table, .mat-table.mat-table{
+    min-width:auto !important ;
+    // width: auto;
+  }
+  th{
+    width: 0 !important;
+    white-space: pre-line !important;
+  }
+  td.mat-cell {
+    padding-right: 11px !important;
+  }
+}
+.toolbar-title{
+  width: 80%;
+}
+
+.toolbar-languaje{
+  display: flex;
+  width: 20%;
+  justify-content: space-around;
+}
+
+.toolbar-languaje > span{
+  font-size: 75%;
+  cursor: pointer;
+}
+
