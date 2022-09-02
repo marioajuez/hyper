@@ -42,6 +42,7 @@ export class ParamsCalcComponent implements OnInit {
 
   public createMembership(): void {
       this.membershipService.createMemberShipsHyperfund(this.form.getRawValue());
+      this.listMemberShips = JSON.parse(localStorage.getItem('memberships'));
   }
 
   /**

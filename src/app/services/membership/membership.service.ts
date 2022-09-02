@@ -29,8 +29,6 @@ export class MembershipService {
   }
 
   public createMemberShipsHyperfund(form): void {
-    console.log(form);
-
     const { 
       initialMembershipLeverage,
       minimumBalanceRebuy,
@@ -39,22 +37,43 @@ export class MembershipService {
       totalDays} = form;
 
     const membership = {
-      id: '1',
-      name: '2',
-      totalDays: '3',
-      initialMembershipLeverage: '4',
-      percentRewards: '',
-      minimumBalanceRebuy: '',
+        id: "2",
+        name: "membership 3.0",
+        totalDays: "1333",
+        initialMembershipLeverage: "4",
+        percentRewards: "0.003",
+        minimumBalanceRebuy: "125"
     };
     const memberships = JSON.parse(localStorage.getItem('memberships'));
-    console.log(memberships);
-    // memberships.push({});
-  }
 
+    console.log(memberships);
+    // memberships.push(membership)
+    // localStorage.setItem('memberships', JSON.stringify(memberships));
+  }
+  
   public getMemberShipsHyperfund(): Observable<Hyperfund.Memberships> {
     return this.httpClient.get('./assets/memberships.json').pipe(
-      map((resp) => {
-        localStorage.setItem('memberships', JSON.stringify(resp));
+      map((resp: any) => {
+        const membershipsSaves = JSON.parse(localStorage.getItem('memberships')) as Array<any> || [];
+        const memberships= resp.memberships as Array<any>;
+
+        // let returnMembership = { 
+        //   memberships: []
+        // }
+
+        // if (memberships.length > membershipsSaves?.length){
+        //     returnMembership.memberships = memberships;
+        //     localStorage.setItem('memberships', JSON.stringify(returnMembership));
+        // }
+        // else {
+        //   returnMembership.memberships = membershipsSaves;
+        //   localStorage.setItem('memberships', JSON.stringify(membershipsSaves));
+        // }
+
+        // console.log(resp);
+        // console.log(returnMembership);
+
+
         return resp;
       })
     ) as Observable<Hyperfund.Memberships>;
