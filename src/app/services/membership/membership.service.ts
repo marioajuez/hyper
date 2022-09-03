@@ -47,34 +47,27 @@ export class MembershipService {
     const memberships = JSON.parse(localStorage.getItem('memberships'));
 
     console.log(memberships);
-    // memberships.push(membership)
-    // localStorage.setItem('memberships', JSON.stringify(memberships));
+    memberships.push(membership)
+    localStorage.setItem('memberships', JSON.stringify(memberships));
   }
   
   public getMemberShipsHyperfund(): Observable<Hyperfund.Memberships> {
     return this.httpClient.get('./assets/memberships.json').pipe(
       map((resp: any) => {
         const membershipsSaves = JSON.parse(localStorage.getItem('memberships')) as Array<any> || [];
-        const memberships= resp.memberships as Array<any>;
+        const memberships = resp.memberships
 
-        // let returnMembership = { 
-        //   memberships: []
-        // }
+        let retornarMemberships = { memberships: []};
+        if (memberships.length > membershipsSaves.length){
 
-        // if (memberships.length > membershipsSaves?.length){
-        //     returnMembership.memberships = memberships;
-        //     localStorage.setItem('memberships', JSON.stringify(returnMembership));
-        // }
-        // else {
-        //   returnMembership.memberships = membershipsSaves;
-        //   localStorage.setItem('memberships', JSON.stringify(membershipsSaves));
-        // }
+            retornarMemberships.memberships = memberships;
+            localStorage.setItem('memberships', JSON.stringify(memberships));
+        }else {
+            retornarMemberships.memberships = membershipsSaves;
+            localStorage.setItem('memberships', JSON.stringify(membershipsSaves));
+        }
 
-        // console.log(resp);
-        // console.log(returnMembership);
-
-
-        return resp;
+        return retornarMemberships;
       })
     ) as Observable<Hyperfund.Memberships>;
   }

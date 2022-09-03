@@ -45,6 +45,16 @@ export class ParamsCalcComponent implements OnInit {
       this.listMemberShips = JSON.parse(localStorage.getItem('memberships'));
   }
 
+
+  public editMembership(index: number): void{
+
+    this.form.get('name').setValue('name');
+    this.form.get('initialMembershipLeverage').setValue('initialMembershipLeverage');
+    this.form.get('percentRewards').setValue('percentRewards');
+    this.form.get('minimumBalanceRebuy').setValue('percentRewards');
+    this.form.get('totalDays').setValue('totalDays');
+  }
+
   /**
   * get list memberships
   * @autor mjuez
