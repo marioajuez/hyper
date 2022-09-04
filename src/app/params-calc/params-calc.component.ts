@@ -49,7 +49,7 @@ export class ParamsCalcComponent implements OnInit {
   public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
 
 
-    const membership = this.listMemberShips[indexElement] as Hyperfund.Membership;
+    const membership = this.listMemberShips[indexElement];
     const target = (event.target as HTMLInputElement);
 
     this.form.get('name').setValue(membership?.id);

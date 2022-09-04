@@ -1,22 +1,24 @@
+// angular
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
-
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClient } from '@angular/common/http';
+// directives 
 import { DirectivesModule } from './directives/directives.module';
-
-
+// material 
 import { ComponentsModule } from './components/components.module';
 import { MaterialModule } from './components/material.module';
 
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+// external libraries
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
+import { NgxMaskModule, IConfig } from 'ngx-mask';
+
+export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
 
 
 export function createTranslateLoader(http: HttpClient) {
@@ -47,6 +49,7 @@ export function createTranslateLoader(http: HttpClient) {
         deps: [HttpClient]
       }
     }),
+    NgxMaskModule.forRoot(),
   ],
   providers: [],
 
