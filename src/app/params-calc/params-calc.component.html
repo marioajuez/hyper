@@ -42,8 +42,15 @@
 </main> -->
 
 <main class="container">
-  <mat-card style="width: 400px;height: 30vh; overflow: auto;">
-    <mat-card-content>
+  <mat-card>
+
+    <mat-card-title>Membership creates</mat-card-title>
+    <mat-card-subtitle>
+      <mat-label class="mat-small">
+        {{ 'please fill out the form to create membership' }}
+      </mat-label>
+    </mat-card-subtitle>
+    <mat-card-content style="width: 400px;height: 30vh; overflow: auto;">
       <mat-list class="padding-top-0">
         <mat-list-item *ngFor="let item of listMemberShips; let index = index" [id]='item.id'>
           <div class="list-item-content">

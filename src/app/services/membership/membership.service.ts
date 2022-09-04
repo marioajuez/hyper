@@ -3,21 +3,6 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 
-declare module Hyperfund {
-  export interface Memberships {
-    memberships: Membership[];
-  }
-
-  export interface Membership {
-    id: string;
-    name: string;
-    totalDays: string;
-    initialMembershipLeverage: string;
-    percentRewards: string;
-    minimumBalanceRebuy: string;
-  }
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -28,13 +13,15 @@ export class MembershipService {
     // this.getMemberShipsHyperfund();
   }
 
-  public createMemberShipsHyperfund(form): void {
+  public createMemberShipsHyperfund(form: Hyperfund.Membership): void {
+    
     const { 
       initialMembershipLeverage,
       minimumBalanceRebuy,
       name,
       percentRewards,
       totalDays} = form;
+      
 
     const membership = {
         id: "2",
@@ -58,7 +45,7 @@ export class MembershipService {
         const memberships = resp.memberships
 
         let retornarMemberships = { memberships: []};
-        if (memberships.length > membershipsSaves.length){
+        if (memberships.length > membershipsSaves.length){ 
 
             retornarMemberships.memberships = memberships;
             localStorage.setItem('memberships', JSON.stringify(memberships));
