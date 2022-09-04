@@ -46,13 +46,17 @@ export class ParamsCalcComponent implements OnInit {
   }
 
 
-  public editMembership(index: number): void{
+  public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
 
-    this.form.get('name').setValue('name');
-    this.form.get('initialMembershipLeverage').setValue('initialMembershipLeverage');
-    this.form.get('percentRewards').setValue('percentRewards');
-    this.form.get('minimumBalanceRebuy').setValue('percentRewards');
-    this.form.get('totalDays').setValue('totalDays');
+
+    const membership = this.listMemberShips[indexElement];
+    const target = (event.target as HTMLInputElement);
+    
+    this.form.get('name').setValue(membership?.id);
+    this.form.get('initialMembershipLeverage').setValue(membership?.initialMembershipLeverage);
+    this.form.get('percentRewards').setValue(membership?.percentRewards);
+    this.form.get('minimumBalanceRebuy').setValue(membership?.minimumBalanceRebuy);
+    this.form.get('totalDays').setValue(membership?.totalDays);
   }
 
   /**

@@ -42,23 +42,26 @@
 </main> -->
 
 <main class="container">
-  <mat-card style="width: 400px;height: 30vh; overflow: auto;" >
+  <mat-card style="width: 400px;height: 30vh; overflow: auto;">
     <mat-card-content>
       <mat-list class="padding-top-0">
-        <mat-list-item *ngFor="let item of listMemberShips;">
+        <mat-list-item *ngFor="let item of listMemberShips; let index = index" [id]='item.id'>
           <div class="list-item-content">
             <mat-icon>card_membership</mat-icon>
             <div class="item-option" style="margin-left:10px">
-                <mat-label class="mat-h3 margin-0"> 
-                  {{item.name}}
-                </mat-label>
+              <mat-label class="mat-h3 margin-0">
+                {{item.name}}
+              </mat-label>
             </div>
-            <div class="actions-option"> 
-              <button mat-icon-button (click)="editMembership(item.id)"><mat-icon>edit</mat-icon></button>
-              <button mat-icon-button><mat-icon>delete</mat-icon> </button>
+            <div class="actions-option">
+              <button mat-icon-button (click)="editMembership($event, item.id, index )">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button>
+                <mat-icon>delete</mat-icon>
+              </button>
               <mat-checkbox [disabled]="false" color="primary"></mat-checkbox>
             </div>
-      
           </div>
           <mat-divider></mat-divider>
         </mat-list-item>
@@ -69,7 +72,7 @@
   <mat-card style="width: 400px">
     <mat-card-title>Create membership</mat-card-title>
     <mat-card-subtitle>
-      <mat-label class="mat-small"> 
+      <mat-label class="mat-small">
         {{ 'please fill out the form to create membership' }}
       </mat-label>
     </mat-card-subtitle>
