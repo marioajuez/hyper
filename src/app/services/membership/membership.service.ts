@@ -2,23 +2,25 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
+import * as firebase from 'firebase';
+import { Hyperfund } from 'src/app/models/membership.model';
 // import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 
-declare module Hyperfund {
-  export interface Memberships {
-    memberships: Membership[];
-  }
+// declare module Hyperfund {
+//   export interface Memberships {
+//     memberships: Membership[];
+//   }
 
-  export interface Membership {
-    id: string;
-    name: string;
-    totalDays: string;
-    initialMembershipLeverage: string;
-    percentRewards: string;
-    minimumBalanceRebuy: string;
-  }
-}
+//   export interface Membership {
+//     id: string;
+//     name: string;
+//     totalDays: string;
+//     initialMembershipLeverage: string;
+//     percentRewards: string;
+//     minimumBalanceRebuy: string;
+//   }
+// }
 
 @Injectable({
   providedIn: 'root',
@@ -26,10 +28,27 @@ declare module Hyperfund {
 export class MembershipService {
   private memberships: any;
 
+    items: Observable<any[]>;
+    private readonly itemsRef: AngularFirestoreCollection<any>;
+
   constructor(
     private httpClient: HttpClient, 
     private firestore: AngularFirestore
     ) {
+
+      // firestore.collection('tasks').get().subscribe( (resp)=> {
+      //   console.log(resp);
+      // });
+
+      // console.log(this.itemsRef);
+
+      // this.items = this.itemsRef.valueChanges().map()
+      
+      
+      // map(snap => snap.docs.map(data => doc.data()));
+      // this.items = from(this.itemsRef); // you can also do this with no mapping
+ 
+    
 
       // firestore.collection('tasks').valueChanges().subscribe( resp => {
       //   console.log(resp);
@@ -43,15 +62,18 @@ export class MembershipService {
       //   console.log(resp);
       // })
 
-      this.firestore
-      .collection("tasks")
-      .get()
-      .subscribe((ss) => {
-        ss.docs.forEach((doc) => {
+      this.firestore.collection("memberships").get().subscribe((resp) => {
+        resp.docs.forEach((doc) => {
           console.log(doc.data());
-      // this.myArray.push(doc.data());
+        })
       });
-  });
+
+      //  this.firestore.collection('tasks').get(
+      //   {
+         
+      //   }
+      //  )
+
 
   }
 
@@ -97,5 +119,30 @@ export class MembershipService {
         return retornarMemberships;
       })
     ) as Observable<Hyperfund.Memberships>;
+  }
+
+  public createMemberShipsFirebase( data: Hyperfund.Membership ): Observable<any> {
+
+
+
+    const membership: Hyperfund.Membership = {
+        // id: "2",
+        name: data.name,
+        totalDays: data.totalDays,
+        initialMembershipLeverage: data.initialMembershipLeverage,
+        percentRewards: data.percentRewards,
+        minimumBalanceRebuy: data.minimumBalanceRebuy,
+        state: '0'
+    };
+
+    this.firestore.collection('memberships').add(membership).then ( () => {
+      console.log("se creo con exito");
+    }).catch ( (error) => {
+      console.log('ha ocurrido un problema');
+    }
+    )
+
+
+    return new Observable();
   }
 }

@@ -1,5 +1,7 @@
+import { state } from '@angular/animations';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+import { Hyperfund } from '../models/membership.model';
 import { MembershipService } from '../services/membership/membership.service';
 
 @Component({
@@ -44,8 +46,19 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   public createMembership(): void {
-      this.membershipService.createMemberShipsHyperfund(this.form.getRawValue());
-      this.listMemberShips = JSON.parse(localStorage.getItem('memberships'));
+
+    const membership: Hyperfund.Membership= {
+      id: '',
+      name: this.form.get('name').value ,
+      totalDays :this.form.get('totalDays').value,
+      initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
+      percentRewards: this.form.get('percentRewards').value,
+      minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
+      state: '1'
+    }
+
+    this.membershipService.createMemberShipsFirebase(membership);
+
   }
 
 

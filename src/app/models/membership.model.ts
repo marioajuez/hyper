@@ -4,11 +4,12 @@ export declare module Hyperfund {
     }
   
     export interface Membership {
-      id: string;
+      id?: string;
       name: string;
       totalDays: string;
       initialMembershipLeverage: string;
       percentRewards: string;
       minimumBalanceRebuy: string;
+      state: string
     }
 }

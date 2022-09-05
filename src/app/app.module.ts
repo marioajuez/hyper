@@ -61,7 +61,16 @@ export function createTranslateLoader(http: HttpClient) {
 
     AngularFireModule.initializeApp(environment.firebase),
     // AngularFireAnalyticsModule,
-    AngularFirestoreModule
+    // AngularFirestoreModule.;
+    // ),
+    AngularFirestoreModule.enablePersistence( 
+      {
+         synchronizeTabs: true
+         
+      }
+    )
+  
+
     
   ],
   providers: [
