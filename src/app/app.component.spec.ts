@@ -20,16 +20,16 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have as title 'hyperfund-calc'`, () => {
+  it(`should have as title 'hyper-calculator'`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('hyperfund-calc');
+    expect(app.title).toEqual('hyper-calculator');
   });
 
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('hyperfund-calc app is running!');
+    expect(compiled.querySelector('.content span').textContent).toContain('hyper-calculator app is running!');
   });
 });

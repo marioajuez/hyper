@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
 import { MembershipService } from '../services/membership/membership.service';
 
 @Component({
@@ -24,6 +24,8 @@ export class ParamsCalcComponent implements OnInit {
         totalDays: '',
   }
 
+  private percentRewards: number;
+
   constructor(
     private fb: FormBuilder,
     private membershipService: MembershipService
@@ -32,13 +34,14 @@ export class ParamsCalcComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    this.form.valueChanges.subscribe( resp => {
-      console.log(resp);
-    })
-
     this.getListMemberships();
-  }
 
+    this.form.valueChanges.subscribe ( control  => {
+      this.percentRewards = Number(this.form.get('percentRewards').value as number);
+      this.percentRewards.toLocaleString();
+      console.log(this.percentRewards);
+    });
+  }
 
   public createMembership(): void {
       this.membershipService.createMemberShipsHyperfund(this.form.getRawValue());
@@ -48,13 +51,14 @@ export class ParamsCalcComponent implements OnInit {
 
   public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
 
-
     const membership = this.listMemberShips[indexElement];
     const target = (event.target as HTMLInputElement);
 
+    const percentRewards = Number(membership?.percentRewards) * 100;
+
     this.form.get('name').setValue(membership?.id);
     this.form.get('initialMembershipLeverage').setValue(membership?.initialMembershipLeverage);
-    this.form.get('percentRewards').setValue(membership?.percentRewards);
+    this.form.get('percentRewards').setValue(percentRewards);
     this.form.get('minimumBalanceRebuy').setValue(membership?.minimumBalanceRebuy);
     this.form.get('totalDays').setValue(membership?.totalDays);
   }
@@ -71,6 +75,8 @@ export class ParamsCalcComponent implements OnInit {
     .subscribe(
       (resp)=> {
         this.listMemberShips.push(...resp.memberships);
+        this.form.setValidators(validatorNameDuplicate(resp.memberships));
+        // this.form.updateValueAndValidity();
       }, error => {
       console.log(error);
       })
@@ -84,6 +90,24 @@ export class ParamsCalcComponent implements OnInit {
       percentRewards: ['', [Validators.required]],
       minimumBalanceRebuy: ['', [Validators.required]],
       totalDays: ['', [Validators.required]],
-    });
+    },{});
   }
+}
+
+
+export const validatorNameDuplicate = (listMemberships?: any): ValidatorFn  => {
+  return (control: AbstractControl): {[key: string]: any} => {
+
+    let isDuplicate = false;
+
+    for (const membership of listMemberships){
+      if ( membership['name'] === control.get('name').value) {
+          isDuplicate = true
+      }
+    }
+    // control.get('name').markAsTouched();
+
+    return (isDuplicate) ? { nameExist: true } : null; 
+  };
+
 }

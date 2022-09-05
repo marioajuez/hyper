@@ -12,14 +12,21 @@ import { DirectivesModule } from './directives/directives.module';
 import { ComponentsModule } from './components/components.module';
 import { MaterialModule } from './components/material.module';
 
+// envs
+import { environment } from '../environments/environment';
+
 // external libraries
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { NgxMaskModule, IConfig } from 'ngx-mask';
 
-export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
+// firebase
+import { AngularFireModule } from '@angular/fire';
+import { AngularFireAnalyticsModule } from '@angular/fire/analytics';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
 
+export const options: Partial<IConfig> | (() => Partial<IConfig>) = null;
 
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -50,8 +57,15 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     NgxMaskModule.forRoot(),
+    // firebase
+
+    AngularFireModule.initializeApp(environment.firebase),
+    // AngularFireAnalyticsModule,
+    AngularFirestoreModule
+    
   ],
-  providers: [],
+  providers: [
+  ],
 
   bootstrap: [AppComponent]
 })

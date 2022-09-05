@@ -44,22 +44,33 @@
       <form [formGroup]="form">
         <div style="display: flex; flex-direction: column">
           <mat-form-field appearance="fill">
+            <mat-label>name</mat-label>
+            <input matInput formControlName="name"/>
+            <mat-hint>
+              <mat-error *ngIf="form.getError('nameExist')">
+                {{ "the name membership already exist" }}
+              </mat-error>
+            </mat-hint>
+
+          </mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>initial Membership Leverage</mat-label>
-            <input matInput formControlName="initialMembershipLeverage" />
+            <input matInput formControlName="initialMembershipLeverage" mask="separator" thousandSeparator="."/>
             <mat-error>
               <ng-container>{{ "error" }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>percent rewards</mat-label>
-            <input matInput formControlName="percentRewards" type="text" suffix="$" mask="0000" />
+            <input matInput formControlName="percentRewards" type="text" [dropSpecialCharacters]="false" mask="percent" suffix=" %"  maxlength="8">
+
             <mat-error>
               <ng-container>{{ "error" }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>minimum balance eebuy</mat-label>
-            <input matInput formControlName="minimumBalanceRebuy" />
+            <mat-label>minimum balance rebuy</mat-label>
+            <input matInput formControlName="minimumBalanceRebuy" mask="separator" thousandSeparator="." />
             <mat-error>
               <ng-container>{{ "error" }}</ng-container>
             </mat-error>
@@ -67,7 +78,7 @@
 
           <mat-form-field appearance="fill">
             <mat-label>total days</mat-label>
-            <input matInput formControlName="totalDays" />
+            <input matInput formControlName="totalDays" mask="separator" thousandSeparator="." />
             <mat-error>
               <ng-container>{{ "error" }}</ng-container>
             </mat-error>
@@ -86,6 +97,9 @@
             </mat-option>
           </mat-select>
         </mat-form-field> -->
+      <button mat-raised-button color="warn" >
+        cancel
+      </button>
       <button mat-raised-button color="primary" (click)="createMembership()">
         save
       </button>

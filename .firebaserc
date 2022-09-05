@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "hyper-calc": {
+      "hosting": {
+        "hyper-calculator": [
+          "hyper-calc"
+        ]
+      }
+    }
+  }
+}

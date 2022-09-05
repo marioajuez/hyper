@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import { AngularFirestore } from '@angular/fire/firestore';
+// import { Firestore, collectionData, collection } from '@angular/fire/firestore';
 
 declare module Hyperfund {
   export interface Memberships {
@@ -24,8 +26,33 @@ declare module Hyperfund {
 export class MembershipService {
   private memberships: any;
 
-  constructor(private httpClient: HttpClient) {
-    // this.getMemberShipsHyperfund();
+  constructor(
+    private httpClient: HttpClient, 
+    private firestore: AngularFirestore
+    ) {
+
+      // firestore.collection('tasks').valueChanges().subscribe( resp => {
+      //   console.log(resp);
+      // })
+
+      // firestore.collection('tasks').doc('aFhmQh1911OwhSGzMMhd').update(
+      //   { title: 'andres', description: 'juez' }
+      // )
+
+      // firestore.collection('tasks').get().subscribe( resp => {
+      //   console.log(resp);
+      // })
+
+      this.firestore
+      .collection("tasks")
+      .get()
+      .subscribe((ss) => {
+        ss.docs.forEach((doc) => {
+          console.log(doc.data());
+      // this.myArray.push(doc.data());
+      });
+  });
+
   }
 
   public createMemberShipsHyperfund(form): void {
@@ -36,7 +63,6 @@ export class MembershipService {
       percentRewards,
       totalDays} = form;
       
-
     const membership = {
         id: "2",
         name: "membership 3.0",
