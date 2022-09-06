@@ -10,6 +10,6 @@ export declare module Hyperfund {
       initialMembershipLeverage: string;
       percentRewards: string;
       minimumBalanceRebuy: string;
-      state: string
+      state: string | any
     }
 }

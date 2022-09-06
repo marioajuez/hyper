@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 import * as firebase from 'firebase';
@@ -62,11 +62,11 @@ export class MembershipService {
       //   console.log(resp);
       // })
 
-      this.firestore.collection("memberships").get().subscribe((resp) => {
-        resp.docs.forEach((doc) => {
-          console.log(doc.data());
-        })
-      });
+      // this.firestore.collection("memberships").get().subscribe((resp) => {
+      //   resp.docs.forEach((doc) => {
+      //     console.log(doc.data());
+      //   })
+      // });
 
       //  this.firestore.collection('tasks').get(
       //   {
@@ -121,9 +121,7 @@ export class MembershipService {
     ) as Observable<Hyperfund.Memberships>;
   }
 
-  public createMemberShipsFirebase( data: Hyperfund.Membership ): Observable<any> {
-
-
+  public createMemberShipsFirebase( data: Hyperfund.Membership ): Observable<any>{
 
     const membership: Hyperfund.Membership = {
         // id: "2",
@@ -135,14 +133,11 @@ export class MembershipService {
         state: '0'
     };
 
-    this.firestore.collection('memberships').add(membership).then ( () => {
-      console.log("se creo con exito");
-    }).catch ( (error) => {
-      console.log('ha ocurrido un problema');
-    }
-    )
+    return of(this.firestore.collection('memberships').add(membership)) as Observable<any> ;
+  }
 
+   public getMemberShipsFirebase(): Observable<any>{
 
-    return new Observable();
+      return this.firestore.collection('memberships').valueChanges() as Observable<any>;
   }
 }

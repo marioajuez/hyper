@@ -1,4 +1,5 @@
 import { state } from '@angular/animations';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
 import { Hyperfund } from '../models/membership.model';
@@ -13,6 +14,8 @@ export class ParamsCalcComponent implements OnInit {
 
   public form: FormGroup;
   public selectedMembership: string = '';
+
+  showButtonCancel = false;
 
   @ViewChild('formMembership', { static: true }) formMembership: NgForm ;
 
@@ -36,7 +39,7 @@ export class ParamsCalcComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    this.getListMemberships();
+    this.getListMembershipsFirebase();
 
     this.form.valueChanges.subscribe ( control  => {
       this.percentRewards = Number(this.form.get('percentRewards').value as number);
@@ -46,6 +49,9 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   public createMembership(): void {
+
+
+    this.showButtonCancel = false;
 
     const membership: Hyperfund.Membership= {
       id: '',
@@ -57,8 +63,36 @@ export class ParamsCalcComponent implements OnInit {
       state: '1'
     }
 
-    this.membershipService.createMemberShipsFirebase(membership);
+    this.membershipService.createMemberShipsFirebase(membership)
+    .subscribe( resp => {
+       console.log(resp,'Se creo con exito');
+    }, 
+    error => {
+       console.log(error, 'Ah ocurrido un problema');
+    });
+  }
 
+  
+  /**
+  * get list memberships
+  * @autor mjuez
+  * @return void
+  */
+  private getListMembershipsFirebase(): void {
+
+    this.membershipService.getMemberShipsFirebase().subscribe(
+      (memberships)=> {
+        this.listMemberShips =  memberships;
+        this.form.setValidators(validatorNameDuplicate(memberships));
+        console.log(this.listMemberShips);
+      }, error => {
+        console.log(error);
+      })
+  }
+
+
+  private updateListMembershipsFirebase(): void {
+    
   }
 
 
@@ -69,7 +103,7 @@ export class ParamsCalcComponent implements OnInit {
 
     const percentRewards = Number(membership?.percentRewards) * 100;
 
-    this.form.get('name').setValue(membership?.id);
+    this.form.get('name').setValue(membership?.name);
     this.form.get('initialMembershipLeverage').setValue(membership?.initialMembershipLeverage);
     this.form.get('percentRewards').setValue(percentRewards);
     this.form.get('minimumBalanceRebuy').setValue(membership?.minimumBalanceRebuy);
@@ -89,9 +123,8 @@ export class ParamsCalcComponent implements OnInit {
       (resp)=> {
         this.listMemberShips.push(...resp.memberships);
         this.form.setValidators(validatorNameDuplicate(resp.memberships));
-        // this.form.updateValueAndValidity();
       }, error => {
-      console.log(error);
+        console.log(error);
       })
   }
 
@@ -118,8 +151,6 @@ export const validatorNameDuplicate = (listMemberships?: any): ValidatorFn  => {
           isDuplicate = true
       }
     }
-    // control.get('name').markAsTouched();
-
     return (isDuplicate) ? { nameExist: true } : null; 
   };
 
