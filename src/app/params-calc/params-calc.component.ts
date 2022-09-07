@@ -15,7 +15,7 @@ export class ParamsCalcComponent implements OnInit {
   public form: FormGroup;
   public selectedMembership: string = '';
 
-  showButtonCancel = false;
+  isEdit = false;
 
   @ViewChild('formMembership', { static: true }) formMembership: NgForm ;
 
@@ -48,10 +48,15 @@ export class ParamsCalcComponent implements OnInit {
     });
   }
 
+  public cancel(){
+    this.isEdit = false;
+    this.form.reset();
+  }
+
   public createMembership(): void {
 
 
-    this.showButtonCancel = false;
+    this.isEdit = false;
 
     const membership: Hyperfund.Membership= {
       id: '',
@@ -97,6 +102,8 @@ export class ParamsCalcComponent implements OnInit {
 
 
   public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
+    
+    this.isEdit = true;
 
     const membership = this.listMemberShips[indexElement];
     const target = (event.target as HTMLInputElement);

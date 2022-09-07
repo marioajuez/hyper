@@ -36,11 +36,47 @@ export class MembershipService {
     private firestore: AngularFirestore
     ) {
 
-      // firestore.collection('tasks').get().subscribe( (resp)=> {
-      //   console.log(resp);
+      // let documentRef = firestore.doc('tasks/7nleL3BVOlQv1L5gcA0F');
+
+      // documentRef.update({foo: 'bar'}).then(res => {
+      //   console.log(`Document updated at ${res}`);
       // });
 
-      // console.log(this.itemsRef);
+      // this.firestore
+      //   .collection("tasks")
+      //   .get()
+      //   .pipe( 
+          
+      //     map( (ss: any) => {
+
+      //       console.log(ss.id);
+
+
+      //       const docs  =  []
+
+      //       ss.docs.forEach((doc) => {
+      //         docs.push(doc.data());
+      //       });
+
+      //       console.log(docs);
+      //       return ss;
+
+      //     })
+          
+      //   ).subscribe ( resp => {
+      //     console.log(resp);
+      //   })
+
+
+        //https://googleapis.dev/nodejs/firestore/latest/DocumentReference.html#update
+
+
+        this.firestore.collection("tasks").snapshotChanges().forEach((changes) => {
+          changes.map((a) => {
+            console.log(a.payload.doc.id);
+            // this.id = a.payload.doc.id;
+          });
+        });
 
       // this.items = this.itemsRef.valueChanges().map()
       
@@ -48,7 +84,6 @@ export class MembershipService {
       // map(snap => snap.docs.map(data => doc.data()));
       // this.items = from(this.itemsRef); // you can also do this with no mapping
  
-    
 
       // firestore.collection('tasks').valueChanges().subscribe( resp => {
       //   console.log(resp);
@@ -139,5 +174,12 @@ export class MembershipService {
    public getMemberShipsFirebase(): Observable<any>{
 
       return this.firestore.collection('memberships').valueChanges() as Observable<any>;
+  }
+
+
+  public getMemberShipsFirebase_(): Observable<any>{
+
+    // return this.firestore.collection('memberships').ref();
+    return new Observable();
   }
 }
