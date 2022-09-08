@@ -85,8 +85,9 @@ export class ParamsCalcComponent implements OnInit {
   */
   private getListMembershipsFirebase(): void {
 
-    this.membershipService.getMemberShipsFirebase().subscribe(
+    this.membershipService.getMemberShipsFirebase_().subscribe(
       (memberships)=> {
+        console.log(memberships);
         this.listMemberShips =  memberships;
         this.form.setValidators(validatorNameDuplicate(memberships));
         console.log(this.listMemberShips);

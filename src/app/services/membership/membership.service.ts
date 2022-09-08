@@ -36,6 +36,7 @@ export class MembershipService {
     private firestore: AngularFirestore
     ) {
 
+
       // let documentRef = firestore.doc('tasks/7nleL3BVOlQv1L5gcA0F');
 
       // documentRef.update({foo: 'bar'}).then(res => {
@@ -70,21 +71,11 @@ export class MembershipService {
 
         //https://googleapis.dev/nodejs/firestore/latest/DocumentReference.html#update
 
-
-        this.firestore.collection("tasks").snapshotChanges().forEach((changes) => {
-          changes.map((a) => {
-            console.log(a.payload.doc.id);
-            // this.id = a.payload.doc.id;
-          });
-        });
-
-      // this.items = this.itemsRef.valueChanges().map()
-      
-      
+        
+  
       // map(snap => snap.docs.map(data => doc.data()));
       // this.items = from(this.itemsRef); // you can also do this with no mapping
  
-
       // firestore.collection('tasks').valueChanges().subscribe( resp => {
       //   console.log(resp);
       // })
@@ -173,13 +164,24 @@ export class MembershipService {
 
    public getMemberShipsFirebase(): Observable<any>{
 
-      return this.firestore.collection('memberships').valueChanges() as Observable<any>;
+      return this.firestore.collection('memberships').valueChanges().pipe( map( (data: any)=>{
+        console.log(data);
+        return data;
+      }) ) as Observable<any>;
   }
 
 
   public getMemberShipsFirebase_(): Observable<any>{
 
-    // return this.firestore.collection('memberships').ref();
-    return new Observable();
+    return this.firestore.collection("memberships").snapshotChanges().pipe(
+      map( (changes: any[]) => {
+          const document = Array.from( {  length: changes.length  }, (element, index) => {
+              const data = changes[index].payload.doc.data() as any;
+              const id = changes[index].payload.doc.id as any;
+              return  { id, ...data};
+          });
+          return document;
+      })
+    );
   }
 }
