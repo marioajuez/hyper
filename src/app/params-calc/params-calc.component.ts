@@ -59,13 +59,15 @@ export class ParamsCalcComponent implements OnInit {
     this.isEdit = false;
 
     const membership: Hyperfund.Membership= {
-      id: '',
+      id: this.membershipService.idAutoIncrementMembership,
+      // id_: this.membershipService.idAutoIncrementMembership,
       name: this.form.get('name').value ,
       totalDays :this.form.get('totalDays').value,
       initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
       percentRewards: this.form.get('percentRewards').value,
       minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
-      state: '1'
+      state: true,
+      date: new Date().getTime()
     }
 
     this.membershipService.createMemberShipsFirebase(membership)
@@ -75,6 +77,28 @@ export class ParamsCalcComponent implements OnInit {
     error => {
        console.log(error, 'Ah ocurrido un problema');
     });
+  }
+
+  /**
+  * get list memberships
+  * @autor mjuez
+  * @return void
+  */
+
+  public deleteMembership(idMembership: number | string ): void {
+
+
+
+    // 
+    // console.log(idMembership);
+    this.membershipService.deleteMemberShipsHyperfund(idMembership).subscribe( resp =>{
+      console.log("Se elimino correctamente");
+
+    }, error => {
+
+    })
+
+
   }
 
   
@@ -103,6 +127,8 @@ export class ParamsCalcComponent implements OnInit {
 
 
   public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
+
+    console.log(idMembership);
     
     this.isEdit = true;
 
@@ -124,7 +150,7 @@ export class ParamsCalcComponent implements OnInit {
   * @return void
   */
 
-  private getListMemberships(): void {
+  private getListMemberships  (): void {
 
     this.membershipService.getMemberShipsHyperfund()
     .subscribe(
@@ -134,6 +160,11 @@ export class ParamsCalcComponent implements OnInit {
       }, error => {
         console.log(error);
       })
+  }
+
+  private deleteMemberships (): void {
+
+
   }
 
   private createForm(): void {

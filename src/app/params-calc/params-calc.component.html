@@ -9,19 +9,22 @@
     </mat-card-subtitle>
     <mat-card-content style="width: 400px;height: 30vh; overflow: auto;">
       <mat-list class="padding-top-0">
-        <mat-list-item *ngFor="let item of listMemberShips; let index = index" [id]='item.id'>
+        <mat-list-item *ngFor="let item of listMemberShips; let index = index">
+          {{item.id_au}}
           <div class="list-item-content">
             <mat-icon>card_membership</mat-icon>
             <div class="item-option" style="margin-left:10px">
               <mat-label class="mat-h3 margin-0">
                 {{item.name}}
-              </mat-label>
+          
+
+              </mat-label>    
             </div>
             <div class="actions-option">
               <button mat-icon-button (click)="editMembership($event, item.id, index )">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button>
+              <button mat-icon-button (click)="deleteMembership(item.id)">
                 <mat-icon>delete</mat-icon>
               </button>
               <mat-checkbox [disabled]="false" color="primary"></mat-checkbox>

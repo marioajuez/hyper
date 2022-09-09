@@ -31,10 +31,48 @@ export class MembershipService {
     items: Observable<any[]>;
     private readonly itemsRef: AngularFirestoreCollection<any>;
 
+    private idMembership = 1;
+
   constructor(
     private httpClient: HttpClient, 
     private firestore: AngularFirestore
     ) {
+
+      // this.firestore.collection("memberships").
+
+      const newId =  this.firestore.createId();
+      console.log(newId);
+
+      this.firestore.collection('memberships').get().subscribe( snap => {
+        console.log(snap.size);
+      });
+
+      this.firestore.collection("memberships").ref.orderBy('date','desc').onSnapshot( snapshot =>{
+        // console.log(snapshot);
+
+        snapshot.docChanges().forEach( change  => {
+          console.log(change.doc.data());
+        })
+      })
+      
+      // orderBy('desc').onSnapshot( snapshot => {
+      //   // console.log(object);
+
+      // //   // 
+      // //   console.log(snapshot.docChanges());
+
+      // //   // snapshot.
+      // //   // snapshot.docChanges().forEach(change => {
+      // //   //     console.log(change);
+      // //   //   // if (change.type === "added") {
+      // //   //   //   setPalette( prevPalette => ([
+      // //   //   //     { id: change.doc.id, ...change.doc.data() },
+      // //   //   //     ...prevPalette
+      // //   //   //   ]))
+      // //   //   // }
+      // //   // })
+
+      // // });
 
 
       // let documentRef = firestore.doc('tasks/7nleL3BVOlQv1L5gcA0F');
@@ -150,15 +188,15 @@ export class MembershipService {
   public createMemberShipsFirebase( data: Hyperfund.Membership ): Observable<any>{
 
     const membership: Hyperfund.Membership = {
-        // id: "2",
+        id_au: data.id,
         name: data.name,
         totalDays: data.totalDays,
         initialMembershipLeverage: data.initialMembershipLeverage,
         percentRewards: data.percentRewards,
         minimumBalanceRebuy: data.minimumBalanceRebuy,
-        state: '0'
+        state: data.state,
+        date: data.date
     };
-
     return of(this.firestore.collection('memberships').add(membership)) as Observable<any> ;
   }
 
@@ -173,15 +211,32 @@ export class MembershipService {
 
   public getMemberShipsFirebase_(): Observable<any>{
 
-    return this.firestore.collection("memberships").snapshotChanges().pipe(
-      map( (changes: any[]) => {
-          const document = Array.from( {  length: changes.length  }, (element, index) => {
-              const data = changes[index].payload.doc.data() as any;
-              const id = changes[index].payload.doc.id as any;
-              return  { id, ...data};
-          });
-          return document;
-      })
+    return this.firestore.collection("memberships").snapshotChanges()
+      .pipe(
+        map( (changes: any)=> {
+            // this.idMembership = changes.length;
+            // https://www.anycodings.com/1questions/2549577/mongodb-and-nodejs-insert-id-with-auto-increment
+            const sortChanges = [...changes.sort( (a,b) => a.payload.doc.data().id_au - b.payload.doc.data().id_au )]
+            this.idMembership = sortChanges[sortChanges.length -1].payload.doc.data().id_au;
+            this.idMembership++;
+            return sortChanges;
+        }),
+        map( (changes: any[]) => {
+            const document = changes.map((element, index) => {
+                const data = changes[index].payload.doc.data() as any;
+                const id = changes[index].payload.doc.id as any;
+                return  { id, ...data};
+            });
+            return document;
+        })
     );
+  }
+
+  public deleteMemberShipsHyperfund(id: any): Observable<any>{
+    return of(this.firestore.collection('memberships').doc(String(id)).delete()) as Observable<any>;
+  }
+
+  get idAutoIncrementMembership(){
+    return this.idMembership;
   }
 }
