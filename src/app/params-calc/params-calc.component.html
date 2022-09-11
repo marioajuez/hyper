@@ -21,10 +21,10 @@
               </mat-label>    
             </div>
             <div class="actions-option">
-              <button mat-icon-button (click)="editMembership($event, item.id, index )">
+              <button mat-icon-button (click)="editMembership($event, index )">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button (click)="deleteMembership(item.id)">
+              <button mat-icon-button (click)="deleteMembership(item.id_document)">
                 <mat-icon>delete</mat-icon>
               </button>
               <mat-checkbox [disabled]="false" color="primary"></mat-checkbox>
@@ -105,22 +105,13 @@
     </mat-card-content>
 
     <mat-card-actions align="end">
-      <!-- <mat-form-field appearance="fill">
-          <mat-label>Memberships</mat-label>
-          <mat-select [(value)]="selectedMembership">
-            <mat-option>None</mat-option>
-            <mat-option [value]="item.name" *ngFor="let item of listMemberShips">
-              {{ item.name | titlecase }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field> -->
       <button mat-raised-button color="warn" *ngIf="isEdit" (click)="cancel()">
         cancel
       </button>
       <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit">
         save
       </button>
-      <button mat-raised-button color="primary" *ngIf="isEdit" >
+      <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()" >
         update
       </button>
     </mat-card-actions>

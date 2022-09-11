@@ -1,8 +1,10 @@
-import { state } from '@angular/animations';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+
+// angular 
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators } from '@angular/forms';
+// models
 import { Hyperfund } from '../models/membership.model';
+// services
 import { MembershipService } from '../services/membership/membership.service';
 
 @Component({
@@ -12,24 +14,14 @@ import { MembershipService } from '../services/membership/membership.service';
 })
 export class ParamsCalcComponent implements OnInit {
 
-  public form: FormGroup;
+  @ViewChild('formMembership', { static: true }) formMembership: NgForm ;
   public selectedMembership: string = '';
 
-  isEdit = false;
-
-  @ViewChild('formMembership', { static: true }) formMembership: NgForm ;
-
+  public form: FormGroup;
   public listMemberShips = [];
-
-  public card = {
-        name: '',
-        initialMembershipLeverage: '',
-        percentRewards: '',
-        minimumBalanceRebuy:'',
-        totalDays: '',
-  }
-
+  public isEdit = false;
   private percentRewards: number;
+  private indexMembershipSelected: any;
 
   constructor(
     private fb: FormBuilder,
@@ -55,22 +47,23 @@ export class ParamsCalcComponent implements OnInit {
 
   public createMembership(): void {
 
-
     this.isEdit = false;
+    const dateTimeNow =  new Date().getTime();
 
     const membership: Hyperfund.Membership= {
-      id: this.membershipService.idAutoIncrementMembership,
-      // id_: this.membershipService.idAutoIncrementMembership,
+      id_au: this.membershipService.idAutoIncrementMembership,
       name: this.form.get('name').value ,
       totalDays :this.form.get('totalDays').value,
       initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
       percentRewards: this.form.get('percentRewards').value,
       minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
       state: true,
-      date: new Date().getTime()
+      date: dateTimeNow,
+      dateUpdate: dateTimeNow
     }
 
-    this.membershipService.createMemberShipsFirebase(membership)
+    this.membershipService
+    .createMemberShipsFirebase(membership)
     .subscribe( resp => {
        console.log(resp,'Se creo con exito');
     }, 
@@ -87,18 +80,15 @@ export class ParamsCalcComponent implements OnInit {
 
   public deleteMembership(idMembership: number | string ): void {
 
-
-
-    // 
-    // console.log(idMembership);
-    this.membershipService.deleteMemberShipsHyperfund(idMembership).subscribe( resp =>{
+    this.isEdit = false;
+    this.form.reset();
+    this.membershipService
+    .deleteMemberShipsHyperfund(idMembership)
+    .subscribe( resp =>{
       console.log("Se elimino correctamente");
-
     }, error => {
-
+      console.log(" ha ocurrido un problema");
     })
-
-
   }
 
   
@@ -120,21 +110,42 @@ export class ParamsCalcComponent implements OnInit {
       })
   }
 
+  public updateMembershipFirebase(): void {
 
-  private updateListMembershipsFirebase(): void {
-    
+    const dataMembership = (this.listMemberShips[this.indexMembershipSelected] as Hyperfund.Membership);
+    const idMembership = dataMembership.id_document;
+    const data: Hyperfund.Membership = {
+      name: this.form.get('name').value ,
+      totalDays: this.form.get('totalDays').value,
+      initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
+      percentRewards: this.form.get('percentRewards').value,
+      minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
+      // state: 
+    }
+
+    console.log(data);
+
+    this.membershipService
+    .updateMemberShipsHyperfund(data, idMembership)
+    .subscribe((resp: any) => {
+      // console.log(re);
+
+      console.log('se modifci correcctamente');
+    }, (error: any)=> {});
   }
 
+  /**
+  * set value membership selected to form
+  * @autor mjuez
+  * @return void
+  */
+  public editMembership(event: Event, indexElement?: number, idMembership?: any): void{
 
-  public editMembership(event: Event, idMembership?: number, indexElement?: number): void{
-
-    console.log(idMembership);
-    
+    this.indexMembershipSelected = indexElement;
     this.isEdit = true;
-
-    const membership = this.listMemberShips[indexElement];
+    
     const target = (event.target as HTMLInputElement);
-
+    const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
     const percentRewards = Number(membership?.percentRewards) * 100;
 
     this.form.get('name').setValue(membership?.name);
@@ -160,11 +171,6 @@ export class ParamsCalcComponent implements OnInit {
       }, error => {
         console.log(error);
       })
-  }
-
-  private deleteMemberships (): void {
-
-
   }
 
   private createForm(): void {
