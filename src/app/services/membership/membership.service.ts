@@ -22,24 +22,13 @@ export class MembershipService {
     private firestore: AngularFirestore
     ) {
 
-      const newId =  this.firestore.createId();
-      console.log(newId);
-
-      this.firestore.collection('memberships').get().subscribe( snap => {
-        console.log(snap.size);
-      });
- 
-      this.firestore.collection("memberships").ref.orderBy('date','desc').onSnapshot( snapshot =>{
-        // console.log(snapshot);
-
-        snapshot.docChanges().forEach( change  => {
-          console.log(change.doc.data());
-        })
-      })
-      
-    
+      // this.firestore.collection("memberships").ref.orderBy('date','desc').onSnapshot( snapshot =>{
+      //   // console.log(snapshot);
+      //   snapshot.docChanges().forEach( change  => {
+      //     console.log(change.doc.data());
+      //   })
+      // })
       //https://googleapis.dev/nodejs/firestore/latest/DocumentReference.html#update
- 
   }
 
   public createMemberShipsHyperfund(form): void {

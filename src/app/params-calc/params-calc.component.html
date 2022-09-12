@@ -1,3 +1,4 @@
+<mat-progress-bar mode="indeterminate" *ngIf="loadMemberships | async"></mat-progress-bar>
 
 <main class="container">
   <mat-card>
@@ -10,14 +11,12 @@
     <mat-card-content style="width: 400px;height: 30vh; overflow: auto;">
       <mat-list class="padding-top-0">
         <mat-list-item *ngFor="let item of listMemberShips; let index = index">
-          {{item.id_au}}
+          <!-- {{item.id_au}} -->
           <div class="list-item-content">
             <mat-icon>card_membership</mat-icon>
             <div class="item-option" style="margin-left:10px">
               <mat-label class="mat-h3 margin-0">
                 {{item.name}}
-          
-
               </mat-label>    
             </div>
             <div class="actions-option">
@@ -53,51 +52,42 @@
     </mat-card-subtitle>
     <mat-card-content>
       <form [formGroup]="form">
-        <div style="display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; flex-direction: column; gap: 5px">
           <mat-form-field appearance="fill">
             <mat-label>name</mat-label>
-            <input matInput formControlName="name"/>
+            <input matInput formControlName="name"  maxlength="30"/>
             <mat-error>
-              <ng-container *ngIf="form.get('name').hasError('required')">
-                  {{ "this field is required" }}
-              </ng-container>
+                <ng-container> {{ getMessageValidationFieldForm(form.get('name')) }}</ng-container>
             </mat-error>
-
-              <mat-error *ngIf="form.getError('nameExist')">
-                {{ "the name membership already exist" }}
-              </mat-error>
-
-            <!-- <mat-hint> </mat-hint>  -->
-
           </mat-form-field>
+
           <mat-form-field appearance="fill">
             <mat-label>initial Membership Leverage</mat-label>
-            <input matInput formControlName="initialMembershipLeverage" mask="separator" thousandSeparator="."/>
+            <input matInput formControlName="initialMembershipLeverage" mask="separator" thousandSeparator="." maxlength="30"/>
             <mat-error>
-              <ng-container>{{ "error" }}</ng-container>
+              <ng-container> {{ getMessageValidationFieldForm( form.get('initialMembershipLeverage')) }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>percent rewards</mat-label>
             <input matInput formControlName="percentRewards" type="text" [dropSpecialCharacters]="false" mask="percent" suffix=" %"  maxlength="8">
-
             <mat-error>
-              <ng-container>{{ "error" }}</ng-container>
+              <ng-container> {{ getMessageValidationFieldForm( form.get('percentRewards')) }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>minimum balance rebuy</mat-label>
-            <input matInput formControlName="minimumBalanceRebuy" mask="separator" thousandSeparator="." />
+            <input matInput formControlName="minimumBalanceRebuy" mask="separator" thousandSeparator="." maxlength="30" />
             <mat-error>
-              <ng-container>{{ "error" }}</ng-container>
+              <ng-container> {{ getMessageValidationFieldForm( form.get('minimumBalanceRebuy')) }}</ng-container>
             </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>total days</mat-label>
-            <input matInput formControlName="totalDays" mask="separator" thousandSeparator="." />
+            <input matInput formControlName="totalDays" mask="separator" thousandSeparator="." maxlength="15" />
             <mat-error>
-              <ng-container>{{ "error" }}</ng-container>
+              <ng-container> {{ getMessageValidationFieldForm( form.get('totalDays')) }}</ng-container>
             </mat-error>
           </mat-form-field>
         </div>
@@ -107,11 +97,15 @@
     <mat-card-actions align="end">
       <button mat-raised-button color="warn" *ngIf="isEdit" (click)="cancel()">
         cancel
-      </button>
+     </button>
+     <!-- <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit" [disabled]="!form.valid">
+        save
+      </button> -->
+
       <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit">
         save
       </button>
-      <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()" >
+      <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()" [disabled]="!form.valid" >
         update
       </button>
     </mat-card-actions>

@@ -1,5 +1,11 @@
 @import '~@angular/material/theming';
 
+::ng-deep.mat-form-field-appearance-fill .mat-form-field-flex {
+    background: white !important;
+    /* background-color: rgba(0,0,0,.04); */
+  }
+  
+
 :host {
     main {
         &.container {
@@ -8,7 +14,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 7px;
             // @include mat-elevation(2);
             .item {
 

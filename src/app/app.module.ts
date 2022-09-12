@@ -20,6 +20,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { NgxMaskModule, IConfig } from 'ngx-mask';
+import { ToastService, AngularToastifyModule } from 'angular-toastify'; 
 
 // firebase
 import { AngularFireModule } from '@angular/fire';
@@ -57,24 +58,20 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     NgxMaskModule.forRoot(),
+    AngularToastifyModule,
     // firebase
 
     AngularFireModule.initializeApp(environment.firebase),
-    // AngularFireAnalyticsModule,
-    // AngularFirestoreModule.;
-    // ),
     AngularFirestoreModule.enablePersistence( 
       {
          synchronizeTabs: true
-         
       }
     )
   
 
     
   ],
-  providers: [
-  ],
+  providers: [ToastService],
 
   bootstrap: [AppComponent]
 })
