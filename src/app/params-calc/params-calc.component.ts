@@ -39,12 +39,10 @@ export class ParamsCalcComponent implements OnInit {
     this.createForm();
     this.getListMembershipsFirebase();
 
-    // this.toastService.info('Se creo con exito')
-
-
     this.form.valueChanges.subscribe ( control  => {
+      // this.percentRewards = 0
       this.percentRewards = Number(Number(this.form.get('percentRewards').value).toLocaleString());
-      console.log( this.percentRewards);
+      // console.log( this.percentRewards);
     });
   }
 
@@ -164,7 +162,7 @@ export class ParamsCalcComponent implements OnInit {
   */
   public editMembership(event: Event, indexElement?: number, idMembership?: any): void{
 
-    this.form.get('name').setValidators([Validators.required]);
+    this.form.get('name').setValidators([Validators.required, validatorNameDuplicate(this.listMemberShips, indexElement)]);
 
     this.indexMembershipSelected = indexElement;
     this.isEdit = true;
@@ -235,14 +233,18 @@ export class ParamsCalcComponent implements OnInit {
 }
 
 
-export const validatorNameDuplicate = (listMemberships?: any): ValidatorFn => {
+export const validatorNameDuplicate = (listMemberships?: any[], discardIndex = -1): ValidatorFn => {
+
 
   return (control: AbstractControl): {[key: string]: any} => {
 
-    let isDuplicate = false;
+      let isDuplicate = false;
+      for (const [index, value] of listMemberships.entries()){
+        if ( value['name'] === control.value && index !== discardIndex ) {
+            isDuplicate = true
+        }
 
-      for (const membership of listMemberships){
-        if ( membership['name'] === control.value) {
+       else if ( value['name'] === control.value && discardIndex === -1 ) {
             isDuplicate = true
         }
       }
