@@ -26,7 +26,12 @@
               <button mat-icon-button (click)="deleteMembership(item.id_document)">
                 <mat-icon>delete</mat-icon>
               </button>
-              <mat-checkbox [disabled]="false" color="primary"></mat-checkbox>
+              <mat-checkbox 
+              (change)= "checkedMembership($event, index)"
+              [disabled]="false" 
+              [checked]="item.state"
+              color="primary">
+            </mat-checkbox>
             </div>
           </div>
           <mat-divider></mat-divider>
@@ -35,8 +40,8 @@
     </mat-card-content>
 
     <mat-card-actions align="center">
-    
-      <button mat-raised-button color="primary">
+     
+      <button mat-raised-button color="primary" (click)="updateStateMembership()">
         apply
       </button>
     </mat-card-actions>

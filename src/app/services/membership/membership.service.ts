@@ -121,6 +121,23 @@ export class MembershipService {
     return of(this.firestore.collection('memberships').doc(String(id)).delete()) as Observable<any>;
   }
 
+  public updateStateMembership ( dataMembership: Hyperfund.Membership, idMembership: any ): Observable<any> {
+    
+
+    const data: Hyperfund.Membership = {
+      name: dataMembership.name,
+      totalDays: dataMembership.totalDays,
+      initialMembershipLeverage: dataMembership.initialMembershipLeverage,
+      percentRewards: dataMembership.percentRewards,
+      decimalRewards: dataMembership.decimalRewards,
+      minimumBalanceRebuy: dataMembership.minimumBalanceRebuy,
+      state:  dataMembership.state,
+      dateUpdate: dataMembership.dateUpdate
+    }
+
+    return of(this.firestore.collection('memberships').doc(String(idMembership)).update(data)) as Observable<any>;
+  }
+
   public updateMemberShipsHyperfund(dataMembership: Hyperfund.Membership, idMembership: any ): Observable<any>{
 
     const data: Hyperfund.Membership = {

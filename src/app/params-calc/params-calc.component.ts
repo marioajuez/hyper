@@ -9,6 +9,7 @@ import { Hyperfund } from '../models/membership.model';
 import { MembershipService } from '../services/membership/membership.service';
 import { finalize } from 'rxjs/operators';
 import { ToastService } from 'angular-toastify';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-params-calc',
@@ -26,6 +27,7 @@ export class ParamsCalcComponent implements OnInit {
   public listMemberShips = [];
   public isEdit = false;
   private indexMembershipSelected: any;
+  private dateTimeNow: number = new Date().getTime();
 
   constructor(
     private fb: FormBuilder,
@@ -48,15 +50,14 @@ export class ParamsCalcComponent implements OnInit {
   public createMembership(): void {
 
     this.isEdit = false;
-    const dateTimeNow =  new Date().getTime();
 
-    const membership: Hyperfund.Membership= {
+    const membership: Hyperfund.Membership = {
       id_au: this.membershipService.idAutoIncrementMembership,
       state: true,
-      date: dateTimeNow,
-      dateUpdate: dateTimeNow,
+      date: this.dateTimeNow,
+      dateUpdate: this.dateTimeNow,
 
-      name: this.form.get('name').value ,
+      name: this.form.get('name').value,
       totalDays: Number(this.form.get('totalDays').value),
       initialMembershipLeverage: Number(this.form.get('initialMembershipLeverage').value),
       percentRewards: Number(this.form.get('percentRewards').value),
@@ -114,24 +115,50 @@ export class ParamsCalcComponent implements OnInit {
       })
   }
 
+  public checkedMembership(event: MatCheckboxChange , indexElement?: number): void{
+
+    this.indexMembershipSelected = indexElement;
+    const valueCheck = event.checked;
+
+    const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
+    membership.state = valueCheck;
+    membership.dateUpdate = this.dateTimeNow;
+  }
+
   /**
   * get list memberships
   * @autor mjuez
   * @return void
   */
 
+  public updateStateMembership(): void {
+
+    const dataMembership = (this.listMemberShips[this.indexMembershipSelected] as Hyperfund.Membership);
+    const idMembership = dataMembership.id_document;
+
+    this.membershipService
+    .updateStateMembership(dataMembership, idMembership)
+    .subscribe((resp: any) => {
+      this.toastService.success('successfully updated state');
+    }, (error: any)=> {
+      this.toastService.error('A problem has occurred');
+    });
+
+  }
+
   public updateMembershipFirebase(): void {
 
     const dataMembership = (this.listMemberShips[this.indexMembershipSelected] as Hyperfund.Membership);
     const idMembership = dataMembership.id_document;
     const data: Hyperfund.Membership = {
+
+      dateUpdate: this.dateTimeNow,
       name: this.form.get('name').value ,
       totalDays: Number(this.form.get('totalDays').value),
       initialMembershipLeverage: Number(this.form.get('initialMembershipLeverage').value),
       percentRewards: Number(this.form.get('percentRewards').value),
       decimalRewards: Number(this.form.get('percentRewards').value) / 100,
       minimumBalanceRebuy: Number(this.form.get('minimumBalanceRebuy').value)
-      // state: 
     }
 
     this.membershipService
