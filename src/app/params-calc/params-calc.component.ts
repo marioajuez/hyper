@@ -25,7 +25,6 @@ export class ParamsCalcComponent implements OnInit {
   public form: FormGroup;
   public listMemberShips = [];
   public isEdit = false;
-  private percentRewards: number;
   private indexMembershipSelected: any;
 
   constructor(
@@ -38,12 +37,6 @@ export class ParamsCalcComponent implements OnInit {
   ngOnInit(): void {
     this.createForm();
     this.getListMembershipsFirebase();
-
-    this.form.valueChanges.subscribe ( control  => {
-      // this.percentRewards = 0
-      this.percentRewards = Number(Number(this.form.get('percentRewards').value).toLocaleString());
-      // console.log( this.percentRewards);
-    });
   }
 
   public cancel(){
@@ -59,26 +52,26 @@ export class ParamsCalcComponent implements OnInit {
 
     const membership: Hyperfund.Membership= {
       id_au: this.membershipService.idAutoIncrementMembership,
-      name: this.form.get('name').value ,
-      totalDays :this.form.get('totalDays').value,
-      initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
-      percentRewards: this.form.get('percentRewards').value,
-      minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
       state: true,
       date: dateTimeNow,
-      dateUpdate: dateTimeNow
+      dateUpdate: dateTimeNow,
+
+      name: this.form.get('name').value ,
+      totalDays: Number(this.form.get('totalDays').value),
+      initialMembershipLeverage: Number(this.form.get('initialMembershipLeverage').value),
+      percentRewards: Number(this.form.get('percentRewards').value),
+      decimalRewards: Number(this.form.get('percentRewards').value) / 100,
+      minimumBalanceRebuy: Number(this.form.get('minimumBalanceRebuy').value),
     }
 
     this.membershipService
     .createMemberShipsFirebase(membership)
     .subscribe( resp => {
-
       this.form.reset();
-      this.toastService.success('Se creo con exito');
-      console.log(resp,'Se creo con exito');
+      this.toastService.success('successfully created');
     }, 
     error => {
-       console.log(error, 'Ah ocurrido un problema');
+      this.toastService.error('A problem has occurred');
     });
   }
 
@@ -95,9 +88,9 @@ export class ParamsCalcComponent implements OnInit {
     this.membershipService
     .deleteMemberShipsHyperfund(idMembership)
     .subscribe( resp =>{
-      console.log("Se elimino correctamente");
+      this.toastService.success('successfully deleted');
     }, error => {
-      console.log(" ha ocurrido un problema");
+      this.toastService.error('A problem has occurred');
     })
   }
 
@@ -117,7 +110,7 @@ export class ParamsCalcComponent implements OnInit {
         this.listMemberShips = memberships;
         this.form.get('name').setValidators([ Validators.required, validatorNameDuplicate(memberships)]); 
       }, error => {
-        console.log(error);
+        this.toastService.error('A problem has occurred');
       })
   }
 
@@ -133,10 +126,11 @@ export class ParamsCalcComponent implements OnInit {
     const idMembership = dataMembership.id_document;
     const data: Hyperfund.Membership = {
       name: this.form.get('name').value ,
-      totalDays: this.form.get('totalDays').value,
-      initialMembershipLeverage: this.form.get('initialMembershipLeverage').value,
-      percentRewards: String(this.percentRewards),
-      minimumBalanceRebuy: this.form.get('minimumBalanceRebuy').value,
+      totalDays: Number(this.form.get('totalDays').value),
+      initialMembershipLeverage: Number(this.form.get('initialMembershipLeverage').value),
+      percentRewards: Number(this.form.get('percentRewards').value),
+      decimalRewards: Number(this.form.get('percentRewards').value) / 100,
+      minimumBalanceRebuy: Number(this.form.get('minimumBalanceRebuy').value)
       // state: 
     }
 
@@ -148,10 +142,9 @@ export class ParamsCalcComponent implements OnInit {
       })
     )
     .subscribe((resp: any) => {
-      console.log('se modifci correcctamente');
-      
+      this.toastService.success('successfully updated');
     }, (error: any)=> {
-      
+      this.toastService.error('A problem has occurred');
     });
   }
 
@@ -169,7 +162,6 @@ export class ParamsCalcComponent implements OnInit {
 
     const target = (event.target as HTMLInputElement);
     const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
-
 
     this.form.get('name').setValue(membership?.name);
     this.form.get('initialMembershipLeverage').setValue(membership?.initialMembershipLeverage);
@@ -225,10 +217,6 @@ export class ParamsCalcComponent implements OnInit {
       minimumBalanceRebuy: ['', [Validators.required]],
       totalDays: ['', [Validators.required]],
     },{});
-
-    this.form.valueChanges.subscribe( data => {
-      // console.log(this.form);
-    })
   }
 }
 
@@ -250,7 +238,6 @@ export const validatorNameDuplicate = (listMemberships?: any[], discardIndex = -
       }
       return (isDuplicate) ? { nameExist: true } : null; 
     };
-
 }
 
 

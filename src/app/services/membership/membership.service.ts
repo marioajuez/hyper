@@ -85,6 +85,7 @@ export class MembershipService {
         totalDays: data.totalDays,
         initialMembershipLeverage: data.initialMembershipLeverage,
         percentRewards: data.percentRewards,
+        decimalRewards: data.decimalRewards,
         minimumBalanceRebuy: data.minimumBalanceRebuy,
         state: data.state,
         date: data.date,
@@ -127,7 +128,8 @@ export class MembershipService {
       totalDays: dataMembership.totalDays,
       initialMembershipLeverage: dataMembership.initialMembershipLeverage,
       percentRewards: dataMembership.percentRewards,
-      minimumBalanceRebuy: dataMembership.minimumBalanceRebuy,
+      decimalRewards: dataMembership.decimalRewards,
+      minimumBalanceRebuy: dataMembership.minimumBalanceRebuy
     }
 
     return of(this.firestore.collection('memberships').doc(String(idMembership)).update(data)) as Observable<any>;

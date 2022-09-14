@@ -10,10 +10,11 @@ export declare module Hyperfund {
       date?: any;
       dateUpdate?: any;
       name: string;
-      totalDays: string;
-      initialMembershipLeverage: string;
-      percentRewards: string;
-      minimumBalanceRebuy: string;
+      totalDays: number;
+      initialMembershipLeverage: number;
+      percentRewards: number;
+      decimalRewards: number;
+      minimumBalanceRebuy: number;
       state?: boolean;
     }
 }
