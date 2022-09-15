@@ -1,15 +1,16 @@
-
 // angular 
-import { Component, OnInit, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ValidatorFn, Validators, FormControl, Validator } from '@angular/forms';
-import { BehaviorSubject, pipe, Subject } from 'rxjs';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators, FormControl } from '@angular/forms';
+import { BehaviorSubject, pipe } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+// material
+import { MatCheckboxChange } from '@angular/material/checkbox';
 // models
 import { Hyperfund } from '../models/membership.model';
 // services
 import { MembershipService } from '../services/membership/membership.service';
-import { finalize } from 'rxjs/operators';
+// libraries external
 import { ToastService } from 'angular-toastify';
-import { MatCheckboxChange } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-params-calc',
@@ -18,22 +19,19 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 })
 export class ParamsCalcComponent implements OnInit {
 
-  @ViewChild('formMembership', { static: true }) formMembership: NgForm ;
-  public selectedMembership: string = '';
-
   public loadMemberships = new BehaviorSubject<boolean>(true)
-
   public form: FormGroup;
   public listMemberShips = [];
   public isEdit = false;
+
   private indexMembershipSelected: any;
-  private dateTimeNow: number = new Date().getTime();
+  private dateTimeNow: number;
 
   constructor(
     private fb: FormBuilder,
     private membershipService: MembershipService,
+    private toastService: ToastService,
     private changeDetectorRef: ChangeDetectorRef,
-    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -41,15 +39,29 @@ export class ParamsCalcComponent implements OnInit {
     this.getListMembershipsFirebase();
   }
 
+  /**
+  * show again the form de register membership
+  * @autor mjuez
+  * @return void
+  */
+
   public cancel(){
     this.isEdit = false;
     this.form.get('name').setValidators([Validators.required, validatorNameDuplicate(this.listMemberShips) ]);
     this.form.reset();
   }
+ 
+  /**
+  * register membership in the database(firebase)
+  * @autor mjuez
+  * @return void
+  */
 
   public createMembership(): void {
 
     this.isEdit = false;
+
+    this.dateTimeNow = new Date().getTime();
 
     const membership: Hyperfund.Membership = {
       id_au: this.membershipService.idAutoIncrementMembership,
@@ -77,7 +89,7 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   /**
-  * get list memberships
+  * deleted membership selected by user
   * @autor mjuez
   * @return void
   */
@@ -96,8 +108,7 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   /**
-  * get list memberships
-  * @autor mjuez
+  * get list memberships regitared in the database (firebase)
   * @return void
   */
   private getListMembershipsFirebase(): void {
@@ -115,19 +126,25 @@ export class ParamsCalcComponent implements OnInit {
       })
   }
 
-  public checkedMembership(event: MatCheckboxChange , indexElement?: number): void{
+
+  /**
+  * update only the status of the selected membership
+  * @return void
+  */
+  
+  public checkedMembership(event: MatCheckboxChange , indexElement?: number): void  {
 
     this.indexMembershipSelected = indexElement;
-    const valueCheck = event.checked;
+    this.dateTimeNow = new Date().getTime();
 
+    const valueCheck = event.checked;
     const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
     membership.state = valueCheck;
     membership.dateUpdate = this.dateTimeNow;
   }
 
   /**
-  * get list memberships
-  * @autor mjuez
+  * update only the status of the selected membership
   * @return void
   */
 
@@ -139,14 +156,22 @@ export class ParamsCalcComponent implements OnInit {
     this.membershipService
     .updateStateMembership(dataMembership, idMembership)
     .subscribe((resp: any) => {
+      this.form.reset();
       this.toastService.success('successfully updated state');
     }, (error: any)=> {
       this.toastService.error('A problem has occurred');
     });
-
   }
 
+  /**
+  * updates the membership values ​​in the database with 
+  * the new values ​​entered by the user
+  * @return void
+  */
+
   public updateMembershipFirebase(): void {
+
+    this.dateTimeNow = new Date().getTime();
 
     const dataMembership = (this.listMemberShips[this.indexMembershipSelected] as Hyperfund.Membership);
     const idMembership = dataMembership.id_document;
@@ -165,6 +190,7 @@ export class ParamsCalcComponent implements OnInit {
     .updateMemberShipsHyperfund(data, idMembership)
     .pipe(
       finalize(() => {
+        this.form.reset();
         this.isEdit = false
       })
     )
@@ -176,11 +202,15 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   /**
-  * set value membership selected to form
-  * @autor mjuez
+  * set the selected membership values ​​for the form and
+  * notify the dom (template) to show the buttons for (cancel, update)
+  * @param event: Event,
+  * @param indexElement?: number,
+  * @param idMembership?: any
   * @return void
   */
-  public editMembership(event: Event, indexElement?: number, idMembership?: any): void{
+
+  public editMembership(event: Event, indexElement?: number, idMembership?: any): void  {
 
     this.form.get('name').setValidators([Validators.required, validatorNameDuplicate(this.listMemberShips, indexElement)]);
 
@@ -196,6 +226,15 @@ export class ParamsCalcComponent implements OnInit {
     this.form.get('minimumBalanceRebuy').setValue(membership?.minimumBalanceRebuy);
     this.form.get('totalDays').setValue(membership?.totalDays);
   }
+
+  /**
+  * returns a validation message according to the field received as a parameter
+  * and the specific message is assigned for each 
+  * validation registered in the field when activated by the user
+  * @param control: FormControl | AbstractControl
+  * @param idMembership?: any
+  * @return string | any
+  */
 
   public getMessageValidationFieldForm(control: FormControl | AbstractControl): string | any {
 
@@ -219,37 +258,34 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   /**
-  * get list memberships
-  * @autor mjuez
+  * build form reactive
   * @return void
   */
 
-  private getListMemberships (): void {
-
-    this.membershipService.getMemberShipsHyperfund()
-    .subscribe(
-      (resp)=> {
-        this.listMemberShips.push(...resp.memberships);
-      }, error => {
-        console.log(error);
-      })
-  }
-
   private createForm(): void {
 
-    this.form = this.fb.group({
-      name: ['', [Validators.required]],
-      initialMembershipLeverage: ['', [Validators.required]],
-      percentRewards: ['', [Validators.required, Validators.min(0.1)]],
-      minimumBalanceRebuy: ['', [Validators.required]],
-      totalDays: ['', [Validators.required]],
-    },{});
+      this.form = this.fb.group({
+        name: ['', [Validators.required]],
+        initialMembershipLeverage: ['', [Validators.required]],
+        percentRewards: ['', [Validators.required, Validators.min(0.1)]],
+        minimumBalanceRebuy: ['', [Validators.required]],
+        totalDays: ['', [Validators.required]],
+      },{});
+    }
   }
-}
 
+
+/**
+* validates that the name of a membership already created is not repeated,
+* it can also pass to the index to exclude the name of a membership currently 
+* this parameter is used for the functionality of editing the membership and finally
+* isreactive form in the field to the reactive form said validation for the field 'name'.
+* @param listMemberships?: any[] 
+* @param discardIndex: number
+* @return ValidatorFn
+*/
 
 export const validatorNameDuplicate = (listMemberships?: any[], discardIndex = -1): ValidatorFn => {
-
 
   return (control: AbstractControl): {[key: string]: any} => {
 
