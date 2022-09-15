@@ -2,46 +2,59 @@
 
 <main class="container">
   <mat-card>
-    <mat-card-title>Membership creates</mat-card-title>
+    <mat-card-title >Membership creates</mat-card-title>
+    <!-- <mat-divider></mat-divider> -->
     <mat-card-subtitle>
-      <mat-label class="mat-small">
-        {{ 'please fill out the form to create membership' }}
-      </mat-label>
+      <!-- <mat-divider></mat-divider> -->
+      <!-- <mat-form-field appearance="fill" style="width: 100%">
+          <input matInput maxlength="30"/>
+      </mat-form-field> -->
     </mat-card-subtitle>
     <mat-card-content style="width: 400px;height: 30vh; overflow: auto;">
-      <mat-list class="padding-top-0">
-        <mat-list-item *ngFor="let item of listMemberShips; let index = index">
-          <!-- {{item.id_au}} -->
-          <div class="list-item-content">
-            <mat-icon>card_membership</mat-icon>
-            <div class="item-option" style="margin-left:10px">
-              <mat-label class="mat-h3 margin-0">
-                {{item.name}}
-              </mat-label>    
+        <mat-list class="padding-top-0">
+          <ng-container *ngIf="listMemberShips.length > 0">
+            <mat-list-item  *ngFor="let item of listMemberShips; let index = index" >
+              <div class="list-item-content">
+                <mat-icon>card_membership</mat-icon>
+                <div class="item-option" style="margin-left:10px">
+                  <mat-label class="mat-h3 margin-0">
+                    {{item.name}}
+                  </mat-label>
+                </div>
+                <div class="actions-option">
+                  <button mat-icon-button (click)="editMembership($event, index )">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteMembership(item.id_document)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <mat-checkbox (change)="checkedMembership($event, index)" [disabled]="false" [checked]="item.state"
+                    color="primary">
+                  </mat-checkbox>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+            </mat-list-item>
+          </ng-container>
+
+          <ng-container *ngIf="listMemberShips.length <= 0">
+
+            <div class="with-out-membership">
+
+                <div style="display:flex; flex-direction: column; align-items: center">
+                  <mat-icon>mood_bad</mat-icon>
+                  <mat-label class="mat-small"> 
+                    {{ 'No membership has been created' }}
+                  </mat-label>
+                </div>
             </div>
-            <div class="actions-option">
-              <button mat-icon-button (click)="editMembership($event, index )">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button (click)="deleteMembership(item.id_document)">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <mat-checkbox 
-              (change)= "checkedMembership($event, index)"
-              [disabled]="false" 
-              [checked]="item.state"
-              color="primary">
-            </mat-checkbox>
-            </div>
-          </div>
-          <mat-divider></mat-divider>
-        </mat-list-item>
+          </ng-container>
       </mat-list>
+
     </mat-card-content>
 
     <mat-card-actions align="center">
-     
-      <button mat-raised-button color="primary" (click)="updateStateMembership()">
+      <button mat-raised-button color="primary" (click)="updateStateMembership()" *ngIf="listMemberShips.length > 0">
         apply
       </button>
     </mat-card-actions>
@@ -49,40 +62,53 @@
   </mat-card>
 
   <mat-card style="width: 400px">
-    <mat-card-title>Create membership</mat-card-title>
+    <mat-card-title>
+      <ng-container *ngIf="!isEdit"> {{ 'Create membership' }}</ng-container>
+      <ng-container *ngIf="isEdit"> {{ 'Update membership' }}</ng-container>
+    </mat-card-title>
     <mat-card-subtitle>
       <mat-label class="mat-small">
-        {{ 'please fill out the form to create membership' }}
+        <ng-container *ngIf="!isEdit">
+          {{ 'please fill out the form to create membership' }}
+        </ng-container>
+
+        <ng-container *ngIf="isEdit">
+          {{ 'please fill out the form to update membership' }}
+        </ng-container>
       </mat-label>
+
     </mat-card-subtitle>
     <mat-card-content>
       <form [formGroup]="form">
         <div style="display: flex; flex-direction: column; gap: 5px">
           <mat-form-field appearance="fill">
             <mat-label>name</mat-label>
-            <input matInput formControlName="name"  maxlength="30"/>
+            <input matInput formControlName="name" maxlength="30" />
             <mat-error>
-                <ng-container> {{ getMessageValidationFieldForm(form.get('name')) }}</ng-container>
+              <ng-container> {{ getMessageValidationFieldForm(form.get('name')) }}</ng-container>
             </mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
             <mat-label>initial Membership Leverage</mat-label>
-            <input matInput formControlName="initialMembershipLeverage" mask="separator" thousandSeparator="." maxlength="30"/>
+            <input matInput formControlName="initialMembershipLeverage" mask="separator" thousandSeparator="."
+              maxlength="30" />
             <mat-error>
               <ng-container> {{ getMessageValidationFieldForm( form.get('initialMembershipLeverage')) }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>percent rewards</mat-label>
-            <input matInput formControlName="percentRewards" type="text" [dropSpecialCharacters]="false" mask="percent" suffix=" %"  maxlength="8">
+            <input matInput formControlName="percentRewards" type="text" [dropSpecialCharacters]="false" mask="percent"
+              suffix=" %" maxlength="8">
             <mat-error>
               <ng-container> {{ getMessageValidationFieldForm( form.get('percentRewards')) }}</ng-container>
             </mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>minimum balance rebuy</mat-label>
-            <input matInput formControlName="minimumBalanceRebuy" mask="separator" thousandSeparator="." maxlength="30" />
+            <input matInput formControlName="minimumBalanceRebuy" mask="separator" thousandSeparator="."
+              maxlength="30" />
             <mat-error>
               <ng-container> {{ getMessageValidationFieldForm( form.get('minimumBalanceRebuy')) }}</ng-container>
             </mat-error>
@@ -102,15 +128,16 @@
     <mat-card-actions align="end">
       <button mat-raised-button color="warn" *ngIf="isEdit" (click)="cancel()">
         cancel
-     </button>
-     <!-- <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit" [disabled]="!form.valid">
+      </button>
+      <!-- <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit" [disabled]="!form.valid">
         save
       </button> -->
 
-      <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit">
+      <button mat-raised-button color="primary" (click)="createMembership()" *ngIf="!isEdit">
         save
       </button>
-      <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()" [disabled]="!form.valid" >
+      <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()"
+        [disabled]="!form.valid">
         update
       </button>
     </mat-card-actions>

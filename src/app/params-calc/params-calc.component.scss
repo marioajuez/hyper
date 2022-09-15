@@ -44,8 +44,6 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-
-
                 flex: 1;
 
                 .item-option {
@@ -67,6 +65,15 @@
                 }
             }
         }
+    }
+
+    .with-out-membership {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 30vh;
+        width: 100%;
     }
 
     .margin-0{
