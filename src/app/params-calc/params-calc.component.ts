@@ -1,7 +1,7 @@
 // angular 
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators, FormControl } from '@angular/forms';
-import { BehaviorSubject, pipe } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 // material
 import { MatCheckboxChange } from '@angular/material/checkbox';
@@ -11,6 +11,7 @@ import { Hyperfund } from '../models/membership.model';
 import { MembershipService } from '../services/membership/membership.service';
 // libraries external
 import { ToastService } from 'angular-toastify';
+
 
 @Component({
   selector: 'app-params-calc',

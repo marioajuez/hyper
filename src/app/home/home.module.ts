@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../components/material.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
+import { AngularToastifyModule } from 'angular-toastify';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 
     ReactiveFormsModule,
     FormsModule,
-    TableVirtualScrollModule
+    TableVirtualScrollModule,
+    AngularToastifyModule
   ]
 })
 export class HomeModule { }

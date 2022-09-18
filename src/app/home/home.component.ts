@@ -4,8 +4,11 @@ import { FormGroup, FormControl, NgForm } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastService } from 'angular-toastify';
 import { Observable, Subject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { MembershipService } from '../services/membership/membership.service';
+import { Hyperfund } from 'src/app/models/membership.model';
 
 interface dataTable {
   days?: number,
@@ -29,11 +32,12 @@ export class HomeComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('table', { read: ElementRef }) paginatorTable: ElementRef;
 
+
   public userData = {
     date: new Date(),
     membership: "400",
+    membershipSelect: 0,
   };
-
 
   // ----  constants calc dependients
   public initialMembershipLeverage: number;
@@ -46,6 +50,7 @@ export class HomeComponent implements OnInit {
   public membershipInitialX:number;
   public recompenseFinal: number;
   public dateReturnInvest = { date: null, day: null };
+  public listMemberships = []
   // ------------------------
 
   table: dataTable[] = [];
@@ -68,26 +73,27 @@ export class HomeComponent implements OnInit {
 
   // --------------------------------------------
   constructor(
-    private translate: TranslateService
-
+    private translate: TranslateService,
+    private membershipService: MembershipService,
+    private toastService: ToastService,
   ) {
 
   
-    // membership 1.0
+    // view template
+
+            //   // membership 1.0
       // this.totalDays = 600;
       // this.initialMembershipLeverage = 3;
       // this.percentRewards = 0.005;
       // this.minimumBalanceRebuy = 50;
 
     // membership 2.0
-      this.totalDays = 1333;
-      this.initialMembershipLeverage = 4;
-      this.percentRewards = 0.003;
-      this.minimumBalanceRebuy = 125;
+    this.totalDays = 1333;
+    this.initialMembershipLeverage = 4;
+    this.percentRewards = 0.003;
+    this.minimumBalanceRebuy = 125;
 
-
-    // view template
-      this.membershipInitialX = Number(this.userData.membership) * this.initialMembershipLeverage;
+    this.membershipInitialX = Number(this.userData.membership) * this.initialMembershipLeverage;
 
 
     this.initilizateTable();
@@ -95,19 +101,43 @@ export class HomeComponent implements OnInit {
   }
 
   ngAfterViewInit() {
+
     this.dataSource.paginator = this.paginator;
     this.ngForm.valueChanges.subscribe(resp => {
+
+
+      // const membershipSelected: Hyperfund.Membership = this.listMemberships[Number(this.userData.membershipSelect)];
+
+      // console.log(membershipSelected);
+
+      // this.totalDays = membershipSelected?.totalDays;
+      // this.initialMembershipLeverage = membershipSelected?.initialMembershipLeverage;
+      // this.percentRewards = membershipSelected?.decimalRewards;
+      // this.minimumBalanceRebuy = membershipSelected?.minimumBalanceRebuy;
     })
   }
 
-
   ngOnInit() {
     this.langs = this.translate.getLangs()
+    this.getMemberShipsEnables();
   }
 
-  changeLanguaje(event) {
+  public changeLanguaje(event) {
     const lang = event.target.innerText.toLowerCase();
     this.translate.use(lang);
+  }
+
+  
+  private getMemberShipsEnables(): void {
+
+    this.membershipService
+    .getMemberShipsEnables()
+    .subscribe( resp => {
+      this.listMemberships = resp;
+    }, 
+    error => {
+      this.toastService.error('A problem has occurred');
+    });
   }
 
   protected initilizateTable() {

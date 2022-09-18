@@ -74,6 +74,21 @@
 
               </div>
           </mat-error>
+        
+        
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label> memberships available</mat-label>
+          <mat-select 
+            [(ngModel)]="userData.membershipSelect" 
+            name = "membershipSelect" 
+            #membershipSelect="ngModel"
+          >
+            <mat-option *ngFor="let membership of listMemberships; let i = index" [value] ='i'> 
+              {{ membership.name }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
 
         <!-- <div style=" padding: 5px 0px 25px 2px;
