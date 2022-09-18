@@ -129,13 +129,13 @@
       <button mat-raised-button color="warn" *ngIf="isEdit" (click)="cancel()">
         cancel
       </button>
-      <!-- <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit" [disabled]="!form.valid">
-        save
-      </button> -->
-
-      <button mat-raised-button color="primary" (click)="createMembership()" *ngIf="!isEdit">
+      <button mat-raised-button color="primary"  (click)="createMembership()" *ngIf="!isEdit" [disabled]="!form.valid">
         save
       </button>
+
+      <!-- <button mat-raised-button color="primary" (click)="createMembership()" *ngIf="!isEdit">
+        save
+      </button> -->
       <button mat-raised-button color="primary" *ngIf="isEdit" (click)="updateMembershipFirebase()"
         [disabled]="!form.valid">
         update

@@ -78,7 +78,9 @@
         
         </mat-form-field>
 
-        <mat-form-field appearance="fill">
+
+        
+        <!-- <mat-form-field appearance="fill">
           <mat-label> memberships available</mat-label>
           <mat-select 
             [(ngModel)]="userData.membershipSelect" 
@@ -89,7 +91,27 @@
               {{ membership.name }}
             </mat-option>
           </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        <!-- [disabled]="!(listMemberships.length > 0)" -->
+
+
+        <ng-container  *ngIf="showListMemberships">
+          <mat-form-field appearance="fill" >
+            <mat-label> memberships available</mat-label>
+            <mat-select 
+              [(ngModel)]="userData.membershipSelect" 
+              name = "membershipSelect" 
+              #membershipSelect="ngModel"
+            >
+              <mat-option *ngFor="let membership of listMemberships; let i = index" [value] ='i'> 
+                {{ membership.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        </ng-container>
+        
 
         <!-- <div style=" padding: 5px 0px 25px 2px;
           width: 100%;
@@ -102,7 +124,7 @@
       </div>
       <div class="item-two">
         <div class="shadow-container">
-              <div class="mat-elevation-z8 container-table">
+              <!-- <div class="mat-elevation-z8 container-table">
               <table #table mat-table [dataSource]="dataSource">
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
@@ -161,7 +183,7 @@
                 (page)="paginationChange($event)" 
                 showFirstLastButtons
                 >
-              </mat-paginator>
+              </mat-paginator> -->
 
             
         </div>

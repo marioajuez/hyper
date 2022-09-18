@@ -1,6 +1,6 @@
 
 import { ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, Output, ViewChild, AfterViewInit } from '@angular/core';
-import { FormGroup, FormControl, NgForm } from '@angular/forms';
+import { FormGroup, FormControl, NgForm, NgControl, NgModel } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { TranslateService } from '@ngx-translate/core';
@@ -27,8 +27,15 @@ interface dataTable {
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
+@ViewChild('f', { static: false }) ngForm: NgForm;
+private membershipList: NgForm;
 
-  @ViewChild('f', { static: true }) ngForm: NgForm;
+//  @ViewChild('f') set content(content: NgForm) {
+//     if(content) { // initially setter gets called with undefined
+//         this.ngForm = content;
+//     }
+//  }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild('table', { read: ElementRef }) paginatorTable: ElementRef;
 
@@ -62,6 +69,8 @@ export class HomeComponent implements OnInit {
   private timeout: any = null;
   private showTableFirstTime = false;
 
+  public showListMemberships = false
+
   // --------- variables to store calculations ------------
   private rebuy;
   private amount;
@@ -76,6 +85,7 @@ export class HomeComponent implements OnInit {
     private translate: TranslateService,
     private membershipService: MembershipService,
     private toastService: ToastService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
 
   
@@ -98,12 +108,14 @@ export class HomeComponent implements OnInit {
 
     this.initilizateTable();
     this.dataSource = new MatTableDataSource(this.table);
+    // this.changeDetectorRef.detectChanges();
   }
 
   ngAfterViewInit() {
 
     this.dataSource.paginator = this.paginator;
     this.ngForm.valueChanges.subscribe(resp => {
+
 
 
       // const membershipSelected: Hyperfund.Membership = this.listMemberships[Number(this.userData.membershipSelect)];
@@ -115,11 +127,15 @@ export class HomeComponent implements OnInit {
       // this.percentRewards = membershipSelected?.decimalRewards;
       // this.minimumBalanceRebuy = membershipSelected?.minimumBalanceRebuy;
     })
+    // this.changeDetectorRef.detectChanges();
+
   }
 
   ngOnInit() {
     this.langs = this.translate.getLangs()
     this.getMemberShipsEnables();
+    // this.changeDetectorRef.detectChanges();
+
   }
 
   public changeLanguaje(event) {
@@ -133,7 +149,15 @@ export class HomeComponent implements OnInit {
     this.membershipService
     .getMemberShipsEnables()
     .subscribe( resp => {
+
       this.listMemberships = resp;
+
+      setTimeout(() => {
+        this.showListMemberships = (this.listMemberships.length > 0);
+        this.ngForm.form.get('membershipSelect')?.updateValueAndValidity();
+        this.ngForm.form.get('membershipSelect')?.markAsTouched();
+      }, 0);
+
     }, 
     error => {
       this.toastService.error('A problem has occurred');
