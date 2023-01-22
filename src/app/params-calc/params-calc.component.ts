@@ -11,22 +11,24 @@ import { Hyperfund } from '../models/membership.model';
 import { MembershipService } from '../services/membership/membership.service';
 // libraries external
 import { ToastService } from 'angular-toastify';
-
+// utilities
+import { getUniqueListBy } from '../util/util'
 
 @Component({
   selector: 'app-params-calc',
   templateUrl: './params-calc.component.html',
-  styleUrls: ['./params-calc.component.scss']
+  styleUrls: ['./params-calc.component.scss'],
+
 })
 export class ParamsCalcComponent implements OnInit {
 
-  public loadMemberships = new BehaviorSubject<boolean>(true)
-  public form: FormGroup;
-  public listMemberShips = [];
-  public isEdit = false;
-
-  private indexMembershipSelected: any;
+  private indexMembershipSelected: number;
   private dateTimeNow: number;
+  public loadMemberships = new BehaviorSubject<boolean>(true);
+  public form: FormGroup;
+  public listMemberShips: Hyperfund.Membership[] = [];
+  public membershipsSelected: Hyperfund.Membership[] = [];
+  public isEdit: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -37,7 +39,7 @@ export class ParamsCalcComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    this.getListMembershipsFirebase();
+    this.getAllMemberShips();
   }
 
   /**
@@ -46,12 +48,14 @@ export class ParamsCalcComponent implements OnInit {
   * @return void
   */
 
-  public cancel(){
+  public cancel() {
     this.isEdit = false;
-    this.form.get('name').setValidators([Validators.required, validatorNameDuplicate(this.listMemberShips) ]);
+    this.form.get('name').setValidators(
+      [Validators.required, validatorNameDuplicate(this.listMemberShips)]
+    );
     this.form.reset();
   }
- 
+
   /**
   * register membership in the database(firebase)
   * @autor mjuez
@@ -61,7 +65,6 @@ export class ParamsCalcComponent implements OnInit {
   public createMembership(): void {
 
     this.isEdit = false;
-
     this.dateTimeNow = new Date().getTime();
 
     const membership: Hyperfund.Membership = {
@@ -79,69 +82,90 @@ export class ParamsCalcComponent implements OnInit {
     }
 
     this.membershipService
-    .createMemberShipsFirebase(membership)
-    .subscribe( resp => {
-      this.form.reset();
-      this.toastService.success('successfully created');
-    }, 
-    error => {
-      this.toastService.error('A problem has occurred');
-    });
+      .createMemberShipsFirebase(membership)
+      .subscribe(resp => {
+        this.form.reset();
+        this.toastService.success('successfully created');
+      },
+        error => {
+          this.toastService.error('A problem has occurred');
+        });
   }
 
   /**
   * deleted membership selected by user
   * @autor mjuez
+  * @param idMembership: number | string
   * @return void
   */
 
-  public deleteMembership(idMembership: number | string ): void {
+  public deleteMembership(idMembership: number | string): void {
 
     this.isEdit = false;
     this.form.reset();
     this.membershipService
-    .deleteMemberShipsHyperfund(idMembership)
-    .subscribe( resp =>{
-      this.toastService.success('successfully deleted');
-    }, error => {
-      this.toastService.error('A problem has occurred');
-    })
-  }
-
-  /**
-  * get list memberships regitared in the database (firebase)
-  * @return void
-  */
-  private getListMembershipsFirebase(): void {
-
-    this.membershipService
-    .getMemberShipsFirebase_()
-    .pipe(finalize(() => {}))
-    .subscribe(
-      (memberships)=> {
-        this.loadMemberships.next(false);
-        this.listMemberShips = memberships;
-        this.form.get('name').setValidators([ Validators.required, validatorNameDuplicate(memberships)]); 
+      .deleteMemberShipsFirebase(idMembership)
+      .subscribe(resp => {
+        this.toastService.success('successfully deleted');
       }, error => {
         this.toastService.error('A problem has occurred');
       })
   }
 
+  /**
+  * get list memberships registared in the database (firebase)
+  * @return void
+  */
+
+  private getAllMemberShips(): void {
+
+    this.membershipService
+      .getAllMemberShipsFirebase()
+      .pipe(finalize(() => { }))
+      .subscribe(
+        (memberships) => {
+          this.loadMemberships.next(false);
+          this.listMemberShips = memberships;
+          this.form.get('name').setValidators(
+            [Validators.required, validatorNameDuplicate(memberships)]
+          );
+        }, error => {
+          this.toastService.error('A problem has occurred');
+        })
+  }
 
   /**
   * update only the status of the selected membership
+  * @param event: MatCheckboxChange,
+  * @param indexElement?: number
   * @return void
   */
-  
-  public checkedMembership(event: MatCheckboxChange , indexElement?: number): void  {
 
-    this.indexMembershipSelected = indexElement;
+  public checkedMembership(
+    event: MatCheckboxChange,
+    indexElement?: number
+  ): void {
+
     this.dateTimeNow = new Date().getTime();
 
     const valueCheck = event.checked;
     const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
-    membership.state = valueCheck;
-    membership.dateUpdate = this.dateTimeNow;
+    const membershipCopy: Hyperfund.Membership = { ...membership };
+
+    // memberships are removed, which is assigned the value that it 
+    // already has in firebase and the method stops executing
+    if (membership.state === valueCheck) {
+
+      const indexDeleteMembership = this.membershipsSelected.findIndex(
+        (element) => element.id_document === membershipCopy.id_document
+      );
+      this.membershipsSelected.splice(indexDeleteMembership, 1);
+      return;
+    }
+
+    membershipCopy.state = valueCheck;
+    membershipCopy.dateUpdate = this.dateTimeNow;
+    this.membershipsSelected.push(membershipCopy);
   }
 
   /**
@@ -149,19 +173,19 @@ export class ParamsCalcComponent implements OnInit {
   * @return void
   */
 
-  public updateStateMembership(): void {
-
-    const dataMembership = (this.listMemberShips[this.indexMembershipSelected] as Hyperfund.Membership);
-    const idMembership = dataMembership.id_document;
-
+  public updateStateListMembership(): void {
     this.membershipService
-    .updateStateMembership(dataMembership, idMembership)
-    .subscribe((resp: any) => {
-      this.form.reset();
-      this.toastService.success('successfully updated state');
-    }, (error: any)=> {
-      this.toastService.error('A problem has occurred');
-    });
+      .updateStateListMembershipsFirebase(this.membershipsSelected)
+      .pipe(
+        finalize(() => {
+          this.membershipsSelected = [];
+        })
+      )
+      .subscribe((resp) => {
+        this.toastService.success('successfully updated state');
+      }, error => {
+        this.toastService.error('A problem has occurred');
+      });
   }
 
   /**
@@ -179,7 +203,7 @@ export class ParamsCalcComponent implements OnInit {
     const data: Hyperfund.Membership = {
 
       dateUpdate: this.dateTimeNow,
-      name: this.form.get('name').value ,
+      name: this.form.get('name').value,
       totalDays: Number(this.form.get('totalDays').value),
       initialMembershipLeverage: Number(this.form.get('initialMembershipLeverage').value),
       percentRewards: Number(this.form.get('percentRewards').value),
@@ -188,18 +212,21 @@ export class ParamsCalcComponent implements OnInit {
     }
 
     this.membershipService
-    .updateMemberShipsHyperfund(data, idMembership)
-    .pipe(
-      finalize(() => {
-        this.form.reset();
-        this.isEdit = false
-      })
-    )
-    .subscribe((resp: any) => {
-      this.toastService.success('successfully updated');
-    }, (error: any)=> {
-      this.toastService.error('A problem has occurred');
-    });
+      .updateMemberShipsFirebase(data, idMembership)
+      .pipe(
+        finalize(() => {
+          this.form.get('name').setValidators(
+            [Validators.required, validatorNameDuplicate(this.listMemberShips)]
+          );
+          this.form.reset();
+          this.isEdit = false
+        })
+      )
+      .subscribe((resp: any) => {
+        this.toastService.success('successfully updated');
+      }, (error: any) => {
+        this.toastService.error('A problem has occurred');
+      });
   }
 
   /**
@@ -207,13 +234,17 @@ export class ParamsCalcComponent implements OnInit {
   * notify the dom (template) to show the buttons for (cancel, update)
   * @param event: Event,
   * @param indexElement?: number,
-  * @param idMembership?: any
   * @return void
   */
 
-  public editMembership(event: Event, indexElement?: number, idMembership?: any): void  {
+  public editMembership(
+    event: Event,
+    indexElement?: number
+  ): void {
 
-    this.form.get('name').setValidators([Validators.required, validatorNameDuplicate(this.listMemberShips, indexElement)]);
+    this.form.get('name').setValidators(
+      [Validators.required, validatorNameDuplicate(this.listMemberShips, indexElement)]
+    );
 
     this.indexMembershipSelected = indexElement;
     this.isEdit = true;
@@ -237,22 +268,24 @@ export class ParamsCalcComponent implements OnInit {
   * @return string | any
   */
 
-  public getMessageValidationFieldForm(control: FormControl | AbstractControl): string | any {
+  public getMessageValidationFieldForm(
+    control: FormControl | AbstractControl
+  ): string | null {
 
     const messagesValidation = {
       required: 'The field is required',
       nameExist: 'the name membership already exist',
       max: 'max',
-      min: (valueMin: any)=>`The value cannot be less than ${valueMin}`,
+      min: (valueMin: any) => `The value cannot be less than ${valueMin}`,
     };
 
-    for (const nameValidation of Object.keys(messagesValidation)){
+    for (const nameValidation of Object.keys(messagesValidation)) {
       if (control.hasError(nameValidation)) {
-          if (typeof(messagesValidation[nameValidation]) === 'function' ){
-              const paramValidation = control.getError(nameValidation)[nameValidation];
-              return messagesValidation[nameValidation](paramValidation)
-          }
-          return messagesValidation[nameValidation]
+        if (typeof (messagesValidation[nameValidation]) === 'function') {
+          const paramValidation = control.getError(nameValidation)[nameValidation];
+          return messagesValidation[nameValidation](paramValidation)
+        }
+        return messagesValidation[nameValidation]
       }
     }
     return null;
@@ -265,43 +298,46 @@ export class ParamsCalcComponent implements OnInit {
 
   private createForm(): void {
 
-      this.form = this.fb.group({
-        name: ['', [Validators.required]],
-        initialMembershipLeverage: ['', [Validators.required]],
-        percentRewards: ['', [Validators.required, Validators.min(0.1)]],
-        minimumBalanceRebuy: ['', [Validators.required]],
-        totalDays: ['', [Validators.required]],
-      },{});
-    }
+    this.form = this.fb.group({
+      name: ['', [Validators.required]],
+      initialMembershipLeverage: ['', [Validators.required]],
+      percentRewards: ['', [Validators.required, Validators.min(0.1)]],
+      minimumBalanceRebuy: ['', [Validators.required]],
+      totalDays: ['', [Validators.required]],
+    }, {});
   }
-
+}
 
 /**
-* validates that the name of a membership already created is not repeated,
-* it can also pass to the index to exclude the name of a membership currently 
-* this parameter is used for the functionality of editing the membership and finally
-* isreactive form in the field to the reactive form said validation for the field 'name'.
-* @param listMemberships?: any[] 
-* @param discardIndex: number
+* validates that the name of a membership already created in the database (firebase) is not repeated.
+* can also be passed to the index to exclude the name of a membership currently, 
+* this parameter is used for membership editing functionality and finally.
+* This validation applies only to the "name" field of the reactive form
+* @param listMemberships?: Hyperfund.Membership[],
+* @param discardIndex = -1
 * @return ValidatorFn
 */
 
-export const validatorNameDuplicate = (listMemberships?: any[], discardIndex = -1): ValidatorFn => {
+export const validatorNameDuplicate = (
+  listMemberships?: Hyperfund.Membership[],
+  discardIndex = -1
+): ValidatorFn => {
 
-  return (control: AbstractControl): {[key: string]: any} => {
+  return (
+    control: AbstractControl
+  ): { [key: string]: boolean | null } => {
 
-      let isDuplicate = false;
-      for (const [index, value] of listMemberships.entries()){
-        if ( value['name'] === control.value && index !== discardIndex ) {
-            isDuplicate = true
-        }
-
-       else if ( value['name'] === control.value && discardIndex === -1 ) {
-            isDuplicate = true
-        }
+    let isDuplicate = false;
+    for (const [index, value] of listMemberships.entries()) {
+      if (
+        value['name'] === control.value &&
+        index !== discardIndex
+      ) {
+        isDuplicate = true;
       }
-      return (isDuplicate) ? { nameExist: true } : null; 
-    };
+    }
+    return (isDuplicate) ? { nameExist: true } : null;
+  };
 }
 
 
