@@ -1,6 +1,6 @@
 // angular 
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators, FormControl } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators, FormControl, ValidationErrors } from '@angular/forms';
 import { BehaviorSubject } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 // material
@@ -28,6 +28,7 @@ export class ParamsCalcComponent implements OnInit {
   public form: FormGroup;
   public listMemberShips: Hyperfund.Membership[] = [];
   public membershipsSelected: Hyperfund.Membership[] = [];
+  public formDataEditInitial: any = {};
   public isEdit: boolean = false;
 
   constructor(
@@ -35,7 +36,7 @@ export class ParamsCalcComponent implements OnInit {
     private membershipService: MembershipService,
     private toastService: ToastService,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.createForm();
@@ -50,6 +51,7 @@ export class ParamsCalcComponent implements OnInit {
 
   public cancel() {
     this.isEdit = false;
+    this.form.clearValidators();
     this.form.get('name').setValidators(
       [Validators.required, validatorNameDuplicate(this.listMemberShips)]
     );
@@ -113,28 +115,6 @@ export class ParamsCalcComponent implements OnInit {
   }
 
   /**
-  * get list memberships registared in the database (firebase)
-  * @return void
-  */
-
-  private getAllMemberShips(): void {
-
-    this.membershipService
-      .getAllMemberShipsFirebase()
-      .pipe(finalize(() => { }))
-      .subscribe(
-        (memberships) => {
-          this.loadMemberships.next(false);
-          this.listMemberShips = memberships;
-          this.form.get('name').setValidators(
-            [Validators.required, validatorNameDuplicate(memberships)]
-          );
-        }, error => {
-          this.toastService.error('A problem has occurred');
-        })
-  }
-
-  /**
   * update only the status of the selected membership
   * @param event: MatCheckboxChange,
   * @param indexElement?: number
@@ -194,7 +174,7 @@ export class ParamsCalcComponent implements OnInit {
   * @return void
   */
 
-  public updateMembershipFirebase(): void {
+  public updateMembership(): void {
 
     this.dateTimeNow = new Date().getTime();
 
@@ -215,6 +195,7 @@ export class ParamsCalcComponent implements OnInit {
       .updateMemberShipsFirebase(data, idMembership)
       .pipe(
         finalize(() => {
+          this.form.clearValidators();
           this.form.get('name').setValidators(
             [Validators.required, validatorNameDuplicate(this.listMemberShips)]
           );
@@ -252,11 +233,23 @@ export class ParamsCalcComponent implements OnInit {
     const target = (event.target as HTMLInputElement);
     const membership: Hyperfund.Membership = this.listMemberShips[indexElement];
 
-    this.form.get('name').setValue(membership?.name);
-    this.form.get('initialMembershipLeverage').setValue(membership?.initialMembershipLeverage);
-    this.form.get('percentRewards').setValue(membership?.percentRewards);
-    this.form.get('minimumBalanceRebuy').setValue(membership?.minimumBalanceRebuy);
-    this.form.get('totalDays').setValue(membership?.totalDays);
+    // It is very important!, that the name of the keys 
+    //of the object correspond to the keys of the editing form (formGroup))
+
+    const fillFormData = {
+      name: String(membership?.name),
+      initialMembershipLeverage: Number(membership?.initialMembershipLeverage),
+      percentRewards: Number(membership?.percentRewards),
+      minimumBalanceRebuy: Number(membership?.minimumBalanceRebuy),
+      totalDays: Number(membership?.totalDays)
+    }
+
+    this.form.setValidators([validatorChangeFormData(fillFormData)]);
+
+    for (const keyForm of Object.keys(fillFormData)) {
+      this.form.get(keyForm).setValue(fillFormData[keyForm]);
+    }
+
   }
 
   /**
@@ -306,8 +299,31 @@ export class ParamsCalcComponent implements OnInit {
       totalDays: ['', [Validators.required]],
     }, {});
   }
+
+  /**
+  * get list memberships registared in the database (firebase)
+  * @return void
+  */
+
+  private getAllMemberShips(): void {
+
+    this.membershipService
+      .getAllMemberShipsFirebase()
+      .pipe(finalize(() => { }))
+      .subscribe(
+        (memberships) => {
+          this.loadMemberships.next(false);
+          this.listMemberShips = memberships;
+          this.form.get('name').setValidators(
+            [Validators.required, validatorNameDuplicate(memberships)]
+          );
+        }, error => {
+          this.toastService.error('A problem has occurred');
+        })
+  }
 }
 
+// VALIDATORS
 /**
 * validates that the name of a membership already created in the database (firebase) is not repeated.
 * can also be passed to the index to exclude the name of a membership currently, 
@@ -338,6 +354,35 @@ export const validatorNameDuplicate = (
     }
     return (isDuplicate) ? { nameExist: true } : null;
   };
+}
+
+/**
+* get changes data membership (firebase)
+* @return void
+*/
+export const validatorChangeFormData = (
+  dataInitialFormEdit: any,
+): ValidatorFn => {
+
+  return (
+    form: FormGroup
+  ): ValidationErrors | null => {
+
+    const fieldsForm: string[] = Object.keys(dataInitialFormEdit);
+    let notChangedData = true;
+    for (const key of fieldsForm) {
+
+      let fieldDataInitial = String(dataInitialFormEdit[key]);
+      let controlField = String(form.get(key).value);
+
+      if (fieldDataInitial !== controlField) {
+        notChangedData = false;
+      }
+    }
+    return (notChangedData) ? { notChangeData: true } : null;
+  };
+
+  // falta revisar esl campo porcentaje y ademas revisar para eliminar validacion
 }
 
 
