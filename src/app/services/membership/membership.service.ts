@@ -149,9 +149,13 @@ export class MembershipService {
     return of(this.angularFirestore.collection("memberships").ref.where('state', '==', true))
       .pipe(
         switchMap((query: Query) => {
+
           return new Observable(subscriber => {
+
             query.onSnapshot({
               next(snapshot) {
+                // console.log('snapshot',  snapshot.docs.)
+
                 const data = snapshot.docs.map((change) => change.data());
                 subscriber.next(data);
               }

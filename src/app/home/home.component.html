@@ -1,13 +1,7 @@
 
-
-<div class="color-background" >
   <mat-toolbar>
     <mat-toolbar-row>
-      <!-- <span class="toolbar-title"> Rebuy Calculator</span> -->
-      <div class = "toolbar-languaje" >
-        <span  (click)="changeLanguaje($event)" 
-        *ngFor="let lang of this.langs" value =lang> {{ lang | uppercase}}</span>
-      </div>
+      <span>Hyper Calculator | Colombia</span>
     </mat-toolbar-row>
   </mat-toolbar>
 
@@ -15,16 +9,14 @@
   <div class="flex">
       <div class="item-one">
         <div class="header-flex shadow-container">
- 
           <div class="content-header">
-            <span style="margin: 0;">{{'start_rewards4x'| translate }}</span>
-            <span >{{ (( f.form.valid ) ? (membershipInitialX ) : '0' )| number }}</span>
+            <h5 style="margin: 0;">Start Membership Rewards {{ initialMembershipLeverage}}x</h5>
+            <h5>{{membership3X | number:'1.2'}}</h5>
           </div>
         </div>
-        
         <form name="form" #f="ngForm" class="shadow-container">
           <mat-form-field appearance="fill">
-            <mat-label>{{'date_initial' | translate }}</mat-label>
+            <mat-label>Date initial</mat-label>
             <input matInput   
               name = "date"
               [matDatepicker]="picker"
@@ -34,17 +26,21 @@
               required
               #date="ngModel"
             >
+
             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker touchUi  #picker></mat-datepicker>
-            <mat-error *ngIf="date.invalid && (date.dirty || date.touched)" class="container-error">
-              <div *ngIf="date.errors?.required">
-                {{"required_field" | translate}}
 
-              </div>
-          </mat-error>
+            <mat-error *ngIf="date.invalid && (date.dirty || date.touched)">
+
+                  <div *ngIf="date.errors?.required">
+                        required field
+                  </div>
+            </mat-error>
           </mat-form-field>
+
+
           <mat-form-field appearance="fill" floatLabel="always">
-            <mat-label>{{ 'start_membership' | translate}}</mat-label>
+            <mat-label>Starting Membership</mat-label>
             <input matInput 
               class="example-right-align" 
               placeholder="0"
@@ -63,148 +59,131 @@
             
           <mat-error class="message-block" *ngIf="membership.invalid && (membership.dirty || membership.touched)">
               <div class="error-message" *ngIf="membership.errors.required">
-                  {{"required_field" | translate}}
+                  required field
               </div>
               <div class="error-message" *ngIf="membership.errors.min && !membership.errors.pattern">
-                {{"min_value_field" | translate}}
-                  
+                  minimum value 50
               </div>
               <div class="error-message" *ngIf="membership.errors.pattern || (membership.errors.min && membership.errors.pattern)">
-                {{"only_numbers" | translate}}
-
+                only numbers
               </div>
           </mat-error>
-        
-        
-        </mat-form-field>
-
-
-        
-        <!-- <mat-form-field appearance="fill">
-          <mat-label> memberships available</mat-label>
-          <mat-select 
-            [(ngModel)]="userData.membershipSelect" 
-            name = "membershipSelect" 
-            #membershipSelect="ngModel"
-          >
-            <mat-option *ngFor="let membership of listMemberships; let i = index" [value] ='i'> 
-              {{ membership.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field> -->
-
-        <!-- [disabled]="!(listMemberships.length > 0)" -->
-
-
-        <ng-container  *ngIf="showListMemberships">
-          <mat-form-field appearance="fill" >
-            <mat-label> memberships available</mat-label>
-            <mat-select 
-              [(ngModel)]="userData.membershipSelect" 
-              name = "membershipSelect" 
-              #membershipSelect="ngModel"
-            >
-              <mat-option *ngFor="let membership of listMemberships; let i = index" [value] ='i'> 
-                {{ membership.name }}
-              </mat-option>
-            </mat-select>
           </mat-form-field>
 
-        </ng-container>
-        
+          
+          <ng-container *ngIf="listMemberships.length > 0">
+            <mat-form-field appearance="fill">
+              <mat-label> memberships available</mat-label>
+              <mat-select [(ngModel)]="userData.membershipSelect" name="membershipSelect" #membershipSelect="ngModel">
+                <mat-option *ngFor="let membership of listMemberships; let i = index" [value]='i'>
+                  {{ membership.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
 
-        <!-- <div style=" padding: 5px 0px 25px 2px;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-        ">
-          <button mat-raised-button  color="basic" style="width: 30%;">Calculate</button>
-        </div> -->
- </form>
+          </ng-container>
+
+          <mat-form-field appearance="fill">
+            <mat-label>¿Rebuy?</mat-label>
+            <mat-select [value]="optionRebuy"   [disabled] ="f.form.invalid" name ="optionRebuy" [(value)]="optionRebuy">
+              <mat-option value ="default">{{ 'select option' | titlecase }}</mat-option>
+              <mat-option (click)="rebuyAlways()" value = "always" >{{ 'always' | titlecase }}</mat-option>
+              <mat-option (click)="rebuyNever()" value = "never" >{{ 'never'| titlecase}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        <mat-divider></mat-divider>
+          <h5 style="padding: 7px 8px 0; margin: 0;">Filters:</h5>
+          <mat-form-field appearance="fill">
+            <mat-label> column "¿Rebuy?" </mat-label>
+            <mat-select [value]='select'  [disabled] ="f.form.invalid"  name ="select" [(ngModel)]="select">
+              <mat-option *ngFor = "let list of listFilter" [value]='list.value' >{{ list.name | titlecase }}</mat-option>
+            </mat-select>
+          </mat-form-field> 
+        </form>
       </div>
       <div class="item-two">
         <div class="shadow-container">
-              <!-- <div class="mat-elevation-z8 container-table">
+
+              <div class="mat-elevation-z8 example-container"
+              *ngIf="listMemberships.length > 0 || table.length > 0"
+              >
               <table #table mat-table [dataSource]="dataSource">
 
                 <tr mat-header-row *matHeaderRowDef="displayedColumns;"></tr>
-                <tr mat-row  *matRowDef="let row; columns: displayedColumns;" [class.hide] = "!f.form.valid "></tr>
-                <tr mat-footer-row *matFooterRowDef="['invalid']"  [class.hide] = "f.form.valid "></tr>
-               
+                <tr mat-row  *matRowDef="let row; columns: displayedColumns;" [class.hide] = "!f.form.valid"></tr>
+                <tr mat-footer-row *matFooterRowDef="['disclaimer']" [class.hide]="dataSource.filteredData.length != 0"></tr>
+                <!-- <tr mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'make': row.dailyRewards >= 50}"></tr> -->
+                  
+                        <ng-container matColumnDef="#">
+                          <th mat-header-cell *matHeaderCellDef [class.hide]="select =='all' || ''">#</th>
+                          <td mat-cell [class.hide]="select =='all' || '' " *matCellDef="let i=index" >{{i+1}} </td>
+                        </ng-container>
                         <ng-container matColumnDef="day">
-                          <th mat-header-cell *matHeaderCellDef> {{'day' | translate}} </th>
-                          <td mat-cell  [ngClass]="{'marker': val.rebuy >= minimumBalanceRebuy}" *matCellDef="let val"> {{val.days}} </td>
+                          <th mat-header-cell *matHeaderCellDef> Day </th>
+                          <td mat-cell *matCellDef="let val"> {{val?.days}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="date">
-                          <th mat-header-cell *matHeaderCellDef> {{'date' | translate}} </th>
-                          <td mat-cell *matCellDef="let days"> {{days.date | date : "dd/MM/yyyy"}} </td>
+                          <th mat-header-cell *matHeaderCellDef> Date </th>
+                          <td mat-cell *matCellDef="let days"> {{days?.date | date : "dd/MM/yyyy"}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="amount">
-                          <th mat-header-cell *matHeaderCellDef> {{ 'amount' | translate}}</th>
-                          <td mat-cell *matCellDef="let val"> {{val.amount | number:'1.2'}}</td>
+                          <th mat-header-cell *matHeaderCellDef> amount </th>
+                          <td mat-cell *matCellDef="let val"> {{val?.amount | number:'1.2'}}</td>
                         </ng-container>
 
                         <ng-container matColumnDef="dailyInterest">
-                            <th mat-header-cell *matHeaderCellDef>{{'daily_rewards' | translate}}</th>
-                            <td mat-cell *matCellDef="let val"> {{val.dailyInterest | number : '1.2'}} </td>
+                            <th mat-header-cell *matHeaderCellDef>Daily Rewards</th>
+                            <td mat-cell *matCellDef="let val"> {{val?.dailyInterest | number : '1.2'}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="dailyRewards" >
-                          <th mat-header-cell *matHeaderCellDef> {{'daily_rewards_running_balance' | translate}} </th>
-                          <td mat-cell *matCellDef="let val"> {{val.dailyRewards | number : '1.2'}} </td>
+                          <th mat-header-cell *matHeaderCellDef> Daily Rewards Running Balance </th>
+                          <td mat-cell *matCellDef="let val"> {{val?.dailyRewards | number : '1.2'}} </td>
                         </ng-container>
 
                         <ng-container matColumnDef="rebuy">
-                          <th mat-header-cell *matHeaderCellDef> {{'rebuy' | translate}}</th>
-                          <td mat-cell *matCellDef="let val"   [ngClass]="{'marker': val.rebuy >= minimumBalanceRebuy}"> {{ val.rebuy | number : '1.2'}} </td>
+                          <th mat-header-cell *matHeaderCellDef> Rebuy</th>
+                          <td mat-cell *matCellDef="let val"   [ngClass]="{'marker': val?.rebuy >= 50}"> {{ val.rebuy | number : '1.2'}} </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="optionRebuy">
+                          <th mat-header-cell *matHeaderCellDef>¿Rebuy?</th>
+                          <td mat-cell *matCellDef="let val; let indice=index"> 
+                              <mat-checkbox [checked]="val.isCheck" (change)="check($event, val.days,indice+1)" color="primary" [class.hide]="val.rebuy < 50">
+                              </mat-checkbox>
+                          </td>
+
                         </ng-container>
 
                         <ng-container matColumnDef="balance">
-                          <th mat-header-cell *matHeaderCellDef> {{'membership_rewards_running_balance' | translate}}</th>
-                          <td mat-cell *matCellDef="let val"> {{ val.membershipBalance | number : '1.2-2'}} </td>
+                          <th mat-header-cell *matHeaderCellDef> Membership Rewards Running Balance</th>
+                          <td mat-cell *matCellDef="let val"> {{ val?.membershipBalance | number : '1.2-2'}} </td>
                         </ng-container>
 
-                        <ng-container matColumnDef="invalid">
+                        <ng-container matColumnDef="disclaimer" >
                           <td mat-footer-cell *matFooterCellDef colspan="12" >
-                            {{ 'footer_invalid' | translate}}
+                            No data matching the filter
                           </td>
                         </ng-container>
-
               </table>
               </div>
 
               <mat-paginator
-                [length]="totalDays"
+                [length]="600"
                 [pageIndex]="0" 
-                [pageSize]="100" 
-                [pageSizeOptions]="[100,200]"
+                [pageSize]="25" 
+                [pageSizeOptions]="[10, 25 ,50, 100]"
                 (page)="paginationChange($event)" 
                 showFirstLastButtons
                 >
-              </mat-paginator> -->
-
-            
+              </mat-paginator> 
         </div>
     </div>
   </div>
-  
-  <footer>
-    <mat-label >
-      {{"made_in" | translate}} ®
-    </mat-label>
-  </footer>
-  
 </div>
 
-
-</div>
-
-
-
-
-
-
-
-
+<!-- <ng-container *ngIf="listMemberships.length > 0">
+    {{ listMemberships[0].totalDays }}
+</ng-container> -->

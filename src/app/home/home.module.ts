@@ -7,26 +7,21 @@ import { ComponentsModule } from '../components/components.module';
 import { DirectivesModule } from '../directives/directives.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../components/material.module';
-import { TranslateModule } from '@ngx-translate/core';
-import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
-import { AngularToastifyModule } from 'angular-toastify';
+
 
 @NgModule({
-  declarations: [
-    HomeComponent
-  ],
+  declarations: [HomeComponent],
   imports: [
     CommonModule,
     HomeRoutingModule,
-    TranslateModule,
+
+    
     ComponentsModule,
     MaterialModule,
     DirectivesModule,
 
     ReactiveFormsModule,
     FormsModule,
-    TableVirtualScrollModule,
-    AngularToastifyModule
   ]
 })
 export class HomeModule { }

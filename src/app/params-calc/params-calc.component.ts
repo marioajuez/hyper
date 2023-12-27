@@ -312,6 +312,7 @@ export class ParamsCalcComponent implements OnInit {
       .pipe(finalize(() => { }))
       .subscribe(
         (memberships) => {
+          console.log("memberships actualizo", memberships)
           this.loadMemberships.next(false);
           this.listMemberShips = memberships;
           this.form.get('name').setValidators(
@@ -381,8 +382,6 @@ export const validatorChangeFormData = (
     }
     return (notChangedData) ? { notChangeData: true } : null;
   };
-
-  // falta revisar esl campo porcentaje y ademas revisar para eliminar validacion
 }
 
 

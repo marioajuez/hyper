@@ -7,7 +7,7 @@ const routes: Routes = [
 
   {
     path:'',
-    redirectTo: 'params',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   {
